@@ -41,7 +41,7 @@ Este repositorio utiliza **GitHub Issues** para gestionar las Historias de Usuar
 ---
 
 ## 👥 Autores
-* **Joaquín Brassinne** - *Desarrollo y Documentación* - [TuGitHubUser](https://github.com/tu-usuario)
+* **Joaquín Brassinne** - *Desarrollo y Documentación* - [MyGitUser]([(https://github.com/joaquinBrassinne)])
 
 ---
-*Proyecto académico desarrollado para [Nombre de tu materia/institución]*
+*Proyecto académico desarrollado para la universidad provincial de Cordoba*
