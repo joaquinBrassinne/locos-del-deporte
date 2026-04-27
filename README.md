@@ -1,4 +1,4 @@
-# 🏆 Locos por el Deporte - Río Tercero
+# 🏆 Locos del Deporte - Río Tercero
 
 **Locos por el Deporte** es una plataforma integral diseñada para potenciar la visibilidad de deportistas, clubes y disciplinas deportivas menos difundidas en la ciudad de Río Tercero. El objetivo es centralizar la información deportiva local, facilitando el contacto entre instituciones, atletas y la comunidad.
 
