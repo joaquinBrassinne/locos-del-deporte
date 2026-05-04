@@ -22,7 +22,7 @@ Para el modelado y planificación de este sistema se utilizaron:
 
 ## 📊 Documentación de Arquitectura
 
-El proyecto cuenta con una sólida base de documentación técnica que puedes encontrar en la carpeta `/docs` (o donde guardes tus .puml):
+El proyecto cuenta con una sólida base de documentación técnica que puedes encontrar en la carpeta `/docs`:
 
 * **Diagramas de Casos de Uso:** Representan la interacción de Administradores, Jugadores, Clubes y Usuarios con el sistema.
 * **Diagrama de Clases:** Define la estructura de datos, atributos y relaciones (Herencia de usuarios, gestión de eventos y solicitudes).
