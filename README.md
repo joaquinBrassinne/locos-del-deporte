@@ -42,7 +42,7 @@ Este repositorio utiliza **GitHub Issues** para gestionar las Historias de Usuar
 
 ## 👥 Autores
 * **Joaquín Brassinne** - *Desarrollo y Documentación* - [MyGitUser](https://github.com/joaquinBrassinne)
-* **Leonel Lopez** - *Desarrollo y Documentacion* - [MyGitUser](https://github.com/leolopez373)
+* **Leo Lopez** - *Desarrollo y Documentacion* - [MyGitUser](https://github.com/leolopez373)
 * **Damian Buscemi** - *Desarrollo y Documentacion* - [MyGitUser](https://github.com/EDAN13512)
 
 ---
