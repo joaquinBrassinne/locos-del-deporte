@@ -114,12 +114,12 @@ public class ClubService implements IClubService {
     @Transactional(readOnly = true)
     public List<ClubMapaDTO> obtenerCoordenadas() {
         return clubRepository.findCoordenadas()
-                .stream()
-                .map(row -> new ClubMapaDTO(
-                        ((Number) row[0]).longValue(),
-                        (String) row[1],
-                        (String) row[2]))
-                .collect(Collectors.toList());
+            .stream()
+            .map(row -> new ClubMapaDTO(
+                    ((Number) row[0]).longValue(),
+                    (String) row[2],   // nombreInstitucion
+                    (String) row[1]))  // coordenadas
+            .collect(Collectors.toList());
     }
 
     private ClubResponseDTO toResponseDTO(Club c) {
