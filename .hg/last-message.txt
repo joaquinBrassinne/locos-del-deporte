@@ -1,0 +1,1 @@
+feat: agregue clubMapaDto para obtener las cordenadas y poder utilizarlas en el frontend;
