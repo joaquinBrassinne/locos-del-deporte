@@ -1,0 +1,28 @@
+@startuml
+header Busqueda y Filtrado de Jugadores (HU-09)
+autonumber
+skinparam style strictuml
+
+actor "Visitante" as User
+participant "Frontend (React)" as Front
+participant "Backend (Java)" as Back
+database "PostgreSQL" as DB
+
+User -> Front : Ingresa "Tenis" en el buscador
+Front -> Back : GET /jugadores?deporte=tenis
+activate Back
+
+Note over Back : El Backend filtra en la DB\npor el parametro 'deporte'
+
+Back -> DB : SELECT * FROM jugadores WHERE deporte = 'tenis'
+activate DB
+DB --> Back : Lista de jugadores
+deactivate DB
+
+Note over Back : Transformar a List<JugadorResumenDTO>
+
+Back --> Front : 200 OK (Array de DTOs)
+deactivate Back
+
+Front -> User : Muestra resultados en la grilla
+@enduml

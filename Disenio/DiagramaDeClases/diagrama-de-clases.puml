@@ -1,0 +1,91 @@
+@startuml
+' --- CONFIGURACIÓN VISUAL ---
+skinparam classAttributeIconSize 0
+left to right direction
+
+' --- CLASES PRINCIPALES ---
+
+class Usuario {
+    - id: Long
+    - nombre: String
+    - email: String
+    - contrasena: String
+    - rol: Rol
+    + login(): Boolean
+}
+
+class Administrador {
+    + gestionarClubes()
+    + gestionarJugadores()
+    + revisarSolicitudes()
+}
+
+class Jugador {
+    - posicion: String
+    - edad: Integer
+    - biografia: String
+    - fotos: List<String>
+    + editarPerfil()
+}
+
+class Club {
+    - nombreInstitucion: String
+    - direccion: String
+    - coordenadas: String
+    - sitioWebUrl: String
+    - fotos: List<String>
+    + actualizarInformacion()
+}
+
+class Evento {
+    - id: Long
+    - titulo: String
+    - fecha: Date
+    - hora: Time
+    - descripcion: String
+}
+
+class SolicitudRegistro {
+    - id: Long
+    - fechaEnvio: Date
+    - estado: EstadoSolicitud
+    - datosAdjuntos: JSON
+    + enviar()
+    + validar()
+}
+
+' --- ENUMS (PARA ROLES Y ESTADOS) ---
+
+enum Rol {
+    ADMIN
+    JUGADOR
+    USUARIO_COMUN
+}
+
+enum EstadoSolicitud {
+    PENDIENTE
+    APROBADO
+    RECHAZADO
+}
+
+' --- RELACIONES ---
+
+' Herencia: Admin, Jugador y Usuario Común son tipos de Usuario
+Usuario <|-- Administrador
+Usuario <|-- Jugador
+
+' El Administrador gestiona las solicitudes de Clubes y Jugadores
+Administrador "1" -- "*" SolicitudRegistro : revisa >
+
+' Relación entre Club y sus eventos (HU-10)
+Club "1" *-- "*" Evento : organiza >
+
+' Un Club puede estar vinculado a una solicitud
+SolicitudRegistro "0..1" -- "1" Club : genera >
+SolicitudRegistro "0..1" -- "1" Jugador : genera >
+
+' Notas explicativas para el profesor
+note right of Club : HU-07: Coordenadas se usan\npara el mapa interactivo.
+note bottom of SolicitudRegistro : HU-04: Almacena datos antes\nde ser confirmados por el Admin.
+
+@enduml

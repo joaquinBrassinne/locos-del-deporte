@@ -1,0 +1,39 @@
+syntax: glob
+Backend/target/
+Backend/.idea/
+HELP.md
+.github/
+.mvn/wrapper/maven-wrapper.jar
+#!**/src/main/**/target/
+#!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+#*.iws
+#*.iml
+#*.ipr
+
+### VS Code ###
+.vscode/
+
+
+node_modules/
+dist/
+.vite/
+*.log
+
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.vite/
+Frontend/package-lock.json.orig
+Frontend/package.json.orig
+package-lock.json
