@@ -22,27 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-
-# Node
-node_modules/
-dist/
-build/
-
-# Mercurial
-.hg/
-
-# Variables de entorno
-.env
-.env.*
-
-# Logs
-*.log
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db

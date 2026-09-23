@@ -1,4 +1,4 @@
-import type { Club, Deportista } from '../types';
+import type { Club, Deportista } from '../types/Index';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 

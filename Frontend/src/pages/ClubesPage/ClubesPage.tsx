@@ -34,7 +34,7 @@ export const ClubesPage = () => {
       <h1>Clubes</h1>
       <SearchBar placeholder="Buscar clubes..." onSearch={handleSearch} />
       <button type="button" onClick={handleToggleAdaptado}>
-        Deporte Inclusivo
+        Deporte Adaptado
       </button>
 
       {loading && <p>Cargando...</p>}

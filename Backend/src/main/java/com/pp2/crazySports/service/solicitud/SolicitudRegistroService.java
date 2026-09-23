@@ -103,7 +103,7 @@ public class SolicitudRegistroService implements ISolicitudService{
             }
         }
         catch (Exception e) {
-            throw new RuntimeException("Error al procesar los datos de la solicitud");
+            throw new RuntimeException("Error al procesar los datos de la solicitud: " + e.getMessage(), e);
         }
     }
 

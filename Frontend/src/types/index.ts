@@ -1,3 +1,17 @@
+export type Tipo = 'CLUB' | 'DEPORTISTA';
+export type Estado = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
+
+export interface Solicitud {
+  id: number;
+  tipo: Tipo;
+  estado: Estado;
+  datosAdjuntos: string;
+  fechaEnvio?: string;
+  fechaRevision?: string;
+  motivoRechazo?: string;
+  perfilCreadoId?: number;
+}
+
 export interface Club {
   id: number;
   nombreInstitucion: string;
@@ -6,6 +20,9 @@ export interface Club {
   telefono: string | null;
   email: string | null;
   sitioWebUrl: string | null;
+  descripcion?: string | null;
+  horarios?: string | null;
+  coordenadas?: string | null;
   deporteAdaptado: boolean;
   fotos: string[];
   cantidadDeportistas: number;

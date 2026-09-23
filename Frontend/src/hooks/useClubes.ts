@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Club } from '../types';
+import type { Club } from '../types/Index';
 import { getClubes, buscarClubes, getClubesAdaptados } from '../services/api';
 
 export const useClubes = () => {

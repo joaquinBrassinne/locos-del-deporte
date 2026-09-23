@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Deportista } from '../types';
+import type { Deportista } from '../types/Index';
 import { getDeportistas, buscarDeportistas, getDeportistasAdaptados } from '../services/api';
 
 export const useDeportistas = () => {
