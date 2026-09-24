@@ -26,6 +26,9 @@ export interface Club {
   deporteAdaptado: boolean;
   fotos: string[];
   cantidadDeportistas: number;
+  anioFundacion?: number | string;
+  verificado?: boolean;
+  instalaciones?: string[];
 }
 
 export interface Deportista {
