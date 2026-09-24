@@ -1,5 +1,6 @@
 package com.pp2.crazySports.dto.deportista;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DeportistaRequestDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
@@ -23,8 +25,9 @@ public class DeportistaRequestDTO {
     private String logros;
     private String sitioWebUrl;
     private List<String> fotos;
-    private String email;
     private String telefono;
-    private Boolean deporteAdaptado = false;
+    private String email;
+    private Boolean deporteAdaptado;
     private Long clubId;  // opcional
+
 }

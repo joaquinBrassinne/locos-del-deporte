@@ -1,12 +1,10 @@
 HELP.md
-
-# Maven / Java
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# STS
+### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -15,13 +13,13 @@ target/
 .springBeans
 .sts4-cache
 
-# IntelliJ IDEA
-.idea/
+### IntelliJ IDEA ###
+.idea
 *.iws
 *.iml
 *.ipr
 
-# NetBeans
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -31,24 +29,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# VS Code
+### VS Code ###
 .vscode/
 
-# Mercurial
-.hg/
-.hgignore
-.hgtags
-.hg
-.hg/*
-
-
-# Node
 node_modules/
-Frontend/node_modules/
-Frontend/dist/
-
-# Environment / secrets
-.env
-.env.*
-application-local.properties
-application-local.yml
+dist/
+.vite/
+*.log

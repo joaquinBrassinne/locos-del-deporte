@@ -1,14 +1,14 @@
 package com.pp2.crazySports.service.club;
 
-import com.pp2.crazySports.dto.club.ClubMapaDTO;
 import com.pp2.crazySports.dto.club.ClubRequestDTO;
 import com.pp2.crazySports.dto.club.ClubResponseDTO;
 import com.pp2.crazySports.model.club.Club;
 import com.pp2.crazySports.repository.IClubRepository;
 import com.pp2.crazySports.repository.IDeportistaRepository;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.pp2.crazySports.dto.club.ClubMapaDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,11 +31,11 @@ public class ClubService implements IClubService {
         club.setDireccion(dto.getDireccion());
         club.setCoordenadas(dto.getCoordenadas());
         club.setSitioWebUrl(dto.getSitioWebUrl());
-        club.setEmail(dto.getEmail());
         club.setTelefono(dto.getTelefono());
-        club.setDisciplinas(dto.getDisciplinas());
+        club.setEmail(dto.getEmail());
         club.setDescripcion(dto.getDescripcion());
         club.setHorarios(dto.getHorarios());
+        club.setDisciplinas(dto.getDisciplinas());
         club.setDeporteAdaptado(dto.getDeporteAdaptado());
         if (dto.getFotos() != null) club.setFotos(dto.getFotos());
 
@@ -43,13 +43,13 @@ public class ClubService implements IClubService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ClubResponseDTO> listarClubes() {
         return clubRepository.findAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ClubResponseDTO obtenerClubPorId(Long id) {
         return toResponseDTO(clubRepository.findById(id).orElseThrow(()-> new RuntimeException("Club no encontrado")));
     }
@@ -57,7 +57,7 @@ public class ClubService implements IClubService {
 
     //REFACTOR, NO ANDA BIEN!
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ClubResponseDTO> buscarPorNombre(String nombre) {
         return clubRepository.findByNombreInstitucionContainingIgnoreCase(nombre).stream()
                 .map(this::toResponseDTO).collect(Collectors.toList());
@@ -69,16 +69,7 @@ public class ClubService implements IClubService {
         Club club = clubRepository.findById(id).orElseThrow(()-> new RuntimeException("Club no encontrado"));
 
         club.setNombreInstitucion(dto.getNombreInstitucion());
-        club.setDireccion(dto.getDireccion());
-        club.setCoordenadas(dto.getCoordenadas());
-        club.setSitioWebUrl(dto.getSitioWebUrl());
-        club.setEmail(dto.getEmail());
-        club.setTelefono(dto.getTelefono());
-        club.setDisciplinas(dto.getDisciplinas());
-        club.setDescripcion(dto.getDescripcion());
-        club.setHorarios(dto.getHorarios());
-        club.setDeporteAdaptado(dto.getDeporteAdaptado());
-        if (dto.getFotos() != null) club.setFotos(dto.getFotos());
+        club.actualizarInformacion(dto.getDireccion(), dto.getCoordenadas(), dto.getSitioWebUrl(), dto.getFotos());
 
         return toResponseDTO(clubRepository.save(club));
     }
@@ -91,43 +82,42 @@ public class ClubService implements IClubService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ClubResponseDTO> listarClubesConDeporteAdaptado() {
-        return listarDeporteAdaptado();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ClubResponseDTO> listarPorDisciplina(String disciplina) {
-        return clubRepository.findByDisciplinasContainingIgnoreCase(disciplina)
-                .stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return clubRepository.findByDeporteAdaptadoTrue().stream()
+                .map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ClubResponseDTO> listarDeporteAdaptado() {
-        return clubRepository.findByDeporteAdaptadoTrue()
-                .stream().map(this::toResponseDTO).collect(Collectors.toList());
+    return clubRepository.findByDeporteAdaptadoTrue()
+            .stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClubResponseDTO> listarPorDisciplina(String disciplina) {
+    return clubRepository.findByDisciplinasContainingIgnoreCase(disciplina)
+            .stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ClubMapaDTO> obtenerCoordenadas() {
-        return clubRepository.findCoordenadas()
-            .stream()
-            .map(row -> new ClubMapaDTO(
-                    ((Number) row[0]).longValue(),
-                    (String) row[2],   // nombreInstitucion
-                    (String) row[1]))  // coordenadas
+        return clubRepository.findAll().stream()
+            .map(c -> new ClubMapaDTO(c.getId(), c.getNombreInstitucion(), c.getCoordenadas()))
             .collect(Collectors.toList());
     }
-
+    
     private ClubResponseDTO toResponseDTO(Club c) {
         int cantDeportistas = (int) deportistaRepository.countByClubId(c.getId());
         return new ClubResponseDTO(
                 c.getId(), c.getNombreInstitucion(), c.getDireccion(),
-                c.getCoordenadas(), c.getSitioWebUrl(), cantDeportistas,
-                c.getEmail(), c.getTelefono(), c.getDisciplinas(),
-                c.getDescripcion(), c.getHorarios(), c.getDeporteAdaptado(), c.getFotos());
+                c.getCoordenadas(), c.getSitioWebUrl(), cantDeportistas, c.getDisciplinas(),
+                c.getTelefono(),c.getEmail(),c.getDescripcion(),c.getHorarios(),c.getDeporteAdaptado(),c.getFotos());
     }
 }

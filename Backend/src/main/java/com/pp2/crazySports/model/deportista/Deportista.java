@@ -38,9 +38,12 @@ public class Deportista {
 
     @Column(nullable = true)
     private String sitioWebUrl;
-    private String email;
+    @Column()
     private String telefono;
-    private Boolean deporteAdaptado = false;
+    @Column()
+    private String email;
+    @Column()
+    private Boolean deporteAdaptado;
 
 
     @ElementCollection

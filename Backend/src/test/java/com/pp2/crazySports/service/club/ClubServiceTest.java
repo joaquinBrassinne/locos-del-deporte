@@ -186,22 +186,22 @@ class ClubServiceTest {
         }
 
         @Test
-@DisplayName("Debe mapear correctamente las coordenadas devueltas por el Object[]")
-void obtenerCoordenadas_Exitoso() {
-    Object[] row = new Object[]{1L, "-32.17,-64.11", "Club Atlético Ejemplo"};
+        @DisplayName("Debe mapear correctamente las coordenadas devueltas por el Object[]")
+        void obtenerCoordenadas_Exitoso() {
+            Object[] row = new Object[]{1L, "-32.17,-64.11", "Club Atlético Ejemplo"};
     
-    // Se especifica explícitamente el tipo genérico <Object[]>
-    List<Object[]> rows = List.<Object[]>of(row);
-    when(clubRepository.findCoordenadas()).thenReturn(rows);
+            // Se especifica explícitamente el tipo genérico <Object[]>
+            List<Object[]> rows = List.<Object[]>of(row);
+            when(clubRepository.findCoordenadas()).thenReturn(rows);
 
-    List<ClubMapaDTO> resultado = clubService.obtenerCoordenadas();
+            List<ClubMapaDTO> resultado = clubService.obtenerCoordenadas();
 
-    assertNotNull(resultado);
-    assertEquals(1, resultado.size());
-    assertEquals(1L, resultado.get(0).getId());
-    assertEquals("-32.17,-64.11", resultado.get(0).getCoordenadas());
-    assertEquals("Club Atlético Ejemplo", resultado.get(0).getNombreInstitucion());
-}
+            assertNotNull(resultado);
+            assertEquals(1, resultado.size());
+            assertEquals(1L, resultado.get(0).getId());
+            assertEquals("-32.17,-64.11", resultado.get(0).getCoordenadas());
+            assertEquals("Club Atlético Ejemplo", resultado.get(0).getNombreInstitucion());
+        }
 
     @Nested
     @DisplayName("Pruebas de actualización")
@@ -259,5 +259,6 @@ void obtenerCoordenadas_Exitoso() {
             verify(clubRepository, never()).deleteById(anyLong());
         }
     }
-    }
+    
+}
 }

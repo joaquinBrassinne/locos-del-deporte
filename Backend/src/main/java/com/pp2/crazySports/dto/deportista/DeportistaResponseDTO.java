@@ -18,8 +18,8 @@ public class DeportistaResponseDTO {
     private String logros;
     private String sitioWebUrl;
     private List<String> fotos;
-    private String email;
     private String telefono;
+    private String email;
     private Boolean deporteAdaptado;
     private String clubNombre;  // null si no pertenece a ningún club
     private Long clubId;

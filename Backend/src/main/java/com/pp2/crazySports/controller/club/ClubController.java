@@ -1,6 +1,5 @@
 package com.pp2.crazySports.controller.club;
 
-import com.pp2.crazySports.dto.club.ClubMapaDTO;
 import com.pp2.crazySports.dto.club.ClubRequestDTO;
 import com.pp2.crazySports.dto.club.ClubResponseDTO;
 import com.pp2.crazySports.service.club.IClubService;
@@ -35,23 +34,14 @@ public class ClubController {
         return ResponseEntity.ok(clubService.obtenerClubPorId(id));
     }
 
-    @GetMapping("/mapa")
-    public ResponseEntity<List<ClubMapaDTO>> obtenerMapa() {
-        return ResponseEntity.ok(clubService.obtenerCoordenadas());
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ClubResponseDTO>> buscarPorNombre(@RequestParam String nombre) {
+        return ResponseEntity.ok(clubService.buscarPorNombre(nombre));
     }
 
     @GetMapping("/adaptado")
-    public ResponseEntity<List<ClubResponseDTO>> clubesAdaptados() {
-        return ResponseEntity.ok(clubService.listarDeporteAdaptado());
-    }
-
-    @GetMapping("/buscar")
-    public ResponseEntity<List<ClubResponseDTO>> buscar(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String disciplina) {
-        if (disciplina != null) return ResponseEntity.ok(clubService.listarPorDisciplina(disciplina));
-        if (nombre != null) return ResponseEntity.ok(clubService.buscarPorNombre(nombre));
-        return ResponseEntity.ok(clubService.listarClubes());
+    public ResponseEntity<List<ClubResponseDTO>> getClubesConDeporteAdaptado() {
+        return ResponseEntity.ok(clubService.listarClubesConDeporteAdaptado());
     }
 
     @PutMapping("/{id}")

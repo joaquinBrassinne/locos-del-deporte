@@ -14,9 +14,9 @@ public class ClubResponseDTO {
     private String coordenadas;
     private String sitioWebUrl;
     private int cantidadDeportistas;
-    private String email;
-    private String telefono;
     private String disciplinas;        // "Fútbol, Básquet, Natación"
+    private String telefono;
+    private String email;
     private String descripcion;        // Texto libre sobre el club
     private String horarios;           // "Lunes a Viernes 8:00 - 22:00"
     private Boolean deporteAdaptado;

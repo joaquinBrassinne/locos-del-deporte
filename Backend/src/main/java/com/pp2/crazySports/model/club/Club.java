@@ -37,12 +37,12 @@ public class Club {
     private List<String> fotos;
 
 
-    private String email;
-    private String telefono;
     private String disciplinas;        // "Fútbol, Básquet, Natación"
+    private String telefono;
+    private String email;
     private String descripcion;        // Texto libre sobre el club
     private String horarios;           // "Lunes a Viernes 8:00 - 22:00"
-    private Boolean deporteAdaptado = false;   // Para el filtro de inclusión (RF-05)
+    private Boolean deporteAdaptado;   // Para el filtro de inclusión (RF-05)
 
     public void actualizarInformacion(String direccion, String coordenadas, String sitioWebUrl, List<String> fotos) {
         this.direccion = direccion;

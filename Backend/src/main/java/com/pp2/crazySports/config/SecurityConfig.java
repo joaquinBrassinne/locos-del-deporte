@@ -11,10 +11,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -22,9 +28,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.csrf(csrf -> csrf.disable())
+        http
+                // 1. LE DECIMOS A SPRING SECURITY QUE USE NUESTRO CORS
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Rutas de Swagger y OpenAPI totalmente públicas (Cualquier método HTTP)
+                        // 2. Permitimos explícitamente el método OPTIONS para el preflight del navegador
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        
+                        // 3. Rutas de Swagger
                         .requestMatchers(
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
@@ -32,12 +44,12 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // 2. Tus endpoints públicos de POST y GET
+                        // 4. Endpoints públicos
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/clubes/**", "/api/deportistas/**").permitAll()
 
-                        // 3. Rutas privadas
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // 5. Rutas privadas (Agregamos /api/solicitudes explícitamente)
+                        .requestMatchers("/api/admin/**", "/api/solicitudes/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
@@ -50,4 +62,17 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // 6. ACÁ DEFINIMOS LAS REGLAS DE CORS QUE USA SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Tu frontend
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true); // Necesario para Basic Auth
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

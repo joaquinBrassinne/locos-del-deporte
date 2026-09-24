@@ -15,7 +15,6 @@ public interface IClubRepository extends JpaRepository<Club, Long> {
     Optional<Club> findByNombreInstitucionIgnoreCase(String nombreInstitucion);
     List<Club> findByDeporteAdaptadoTrue();
     List<Club> findByDisciplinasContainingIgnoreCase(String disciplina);
-
-    @Query("SELECT c.id, c.nombreInstitucion, c.coordenadas FROM Club c WHERE c.coordenadas IS NOT NULL")
+    @Query(value = "SELECT c.id, c.coordenadas, c.nombre_institucion FROM clubes c", nativeQuery = true)
     List<Object[]> findCoordenadas();
 }

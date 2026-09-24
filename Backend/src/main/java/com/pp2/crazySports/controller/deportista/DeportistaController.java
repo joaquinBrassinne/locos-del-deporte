@@ -25,7 +25,7 @@ public class DeportistaController {
 
     @GetMapping
     public ResponseEntity<List<DeportistaResponseDTO>> listarDeportistas() {
-        return ResponseEntity.ok(deportistaService.listarDeportistas());
+        return ResponseEntity.ok(deportistaService.listDeportistas());
     }
 
     @GetMapping("/{id}")
@@ -34,15 +34,13 @@ public class DeportistaController {
     }
 
     @GetMapping("/adaptado")
-    public ResponseEntity<List<DeportistaResponseDTO>> deportistasAdaptados() {
-        return ResponseEntity.ok(deportistaService.listarDeporteAdaptado());
+    public ResponseEntity<List<DeportistaResponseDTO>> listarDeportistasAdaptados() {
+        return ResponseEntity.ok(deportistaService.listDeportistasConDeporteAdaptado());
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<DeportistaResponseDTO>> buscar(
-            @RequestParam(required = false) String deporte) {
-        if (deporte != null) return ResponseEntity.ok(deportistaService.listarPorDeporte(deporte));
-        return ResponseEntity.ok(deportistaService.listarDeportistas());
+    public ResponseEntity<List<DeportistaResponseDTO>> buscarDeportistasPorDeporte(@RequestParam String deporte) {
+        return ResponseEntity.ok(deportistaService.buscarPorDeporte(deporte));
     }
 
     @PutMapping("/{id}")
