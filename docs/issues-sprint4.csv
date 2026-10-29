@@ -1,0 +1,574 @@
+﻿"Título","Cuerpo","Etiquetas","Milestone","Asignado"
+"[Bug][API] Ids inexistentes devuelven 500 (o 400) en vez de 404","**Caso que lo detectó**
+TC-API-03 y TC-API-07 (Newman, FAIL); TC-PA-08 y TC-PA-09 (planilla); 12 tests de JUnit `*404_cuando*` en los 4 controllers (AdminControllerTest, ClubControllerTest, DeportistaControllerTest, SolicitudRegistroControllerTest). Criterio de aceptación CA-10.3.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el contrato REST es incorrecto pero no se pierden datos; el cliente puede distinguir el caso por el mensaje
+
+**Pasos para reproducir**
+1. Backend arriba y sesión de admin (`AdminRoot` / `locos1234`).
+2. `curl -i -u AdminRoot:locos1234 -X PUT http://localhost:8080/api/clubes/999999 -H ""Content-Type: application/json"" -d '{""nombreInstitucion"":""x"",""direccion"":""y""}'`
+3. `curl -i -u AdminRoot:locos1234 -X DELETE http://localhost:8080/api/clubes/999999`
+4. Repetir con `/api/deportistas/999999`, `GET /api/solicitudes/999999` y `POST /api/admin/club/999999`.
+
+**Resultado esperado**
+HTTP 404 (CA-10.3: operaciones sobre ids inexistentes devuelven 404).
+
+**Resultado obtenido**
+HTTP 500 con `RuntimeException: Club no encontrado` en `/api/clubes`, `/api/deportistas` y `/api/solicitudes`; HTTP 400 (`IllegalArgumentException`) en las rutas de `/api/admin/*`.
+
+**Evidencia**
+`tests/postman/POSIBLES-BUGS.md` (#1 y #2); `docs/tests-backend.md` (BUG-01); `docs/matriz-trazabilidad.csv`. Los 500 incluyen el stack trace en el body.
+
+**Arreglo sugerido**
+Crear una excepción de dominio (por ejemplo `RecursoNoEncontradoException`) o usar `ResponseStatusException(NOT_FOUND)` en los services, y mapearla a 404 en `GlobalExceptionHandler`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-01._","bug","Sprint 4","joaquinBrassinne"
+"[Bug][Validación] Se acepta edad 150 (falta límite máximo en DeportistaRequestDTO)","**Caso que lo detectó**
+TC-PA-12 (planilla, FAIL); JUnit `DeportistaRequestDTOValidationTest.debeFallar_cuandoEdadSuperaLimiteMaximo` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — permite datos biológicamente imposibles en perfiles públicos
+
+**Pasos para reproducir**
+1. Crear una solicitud de deportista (`POST /api/solicitudes`).
+2. `POST /api/admin/deportista/{idSolicitud}` con admin y `""edad"": 150`.
+
+**Resultado esperado**
+HTTP 400 mencionando `edad` (rango válido asumido: 1–120, supuesto 4 del plan).
+
+**Resultado obtenido**
+El DTO solo tiene `@Min(1)`; la edad 150 pasa la validación y se crea el perfil.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-02A); test de JUnit en rojo.
+
+**Arreglo sugerido**
+Agregar `@Max(120)` a `edad` en `DeportistaRequestDTO` (confirmar el límite con el cliente).
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02A._","bug","Sprint 4","leolopez373"
+"[Bug][Validación] Se acepta teléfono con letras (clubes y deportistas)","**Caso que lo detectó**
+TC-PA-15 (planilla, FAIL); JUnit `ClubRequestDTOValidationTest.debeFallar_cuandoTelefonoContieneLetras` y `DeportistaRequestDTOValidationTest.debeFallar_cuandoTelefonoContieneLetras` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — datos de contacto inválidos quedan publicados
+
+**Pasos para reproducir**
+1. Crear una solicitud de club.
+2. `POST /api/admin/club/{idSolicitud}` con `""telefono"": ""abc-xyz""`.
+
+**Resultado esperado**
+HTTP 400 mencionando `telefono` (supuesto 4 del plan: solo dígitos).
+
+**Resultado obtenido**
+Se acepta cualquier cadena: los DTOs no tienen `@Pattern`.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-02B); tests de JUnit en rojo.
+
+**Arreglo sugerido**
+Agregar `@Pattern` (solo dígitos o formato E.164, a definir con el cliente) en `ClubRequestDTO` y `DeportistaRequestDTO`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02B._","bug","Sprint 4","leolopez373"
+"[Bug][Validación] Se acepta email inválido (por ejemplo ""test@"")","**Caso que lo detectó**
+TC-PA-16 (Newman, FAIL: responde 201); JUnit `ClubRequestDTOValidationTest.debeFallar_cuandoEmailEsInvalido` y `DeportistaRequestDTOValidationTest.debeFallar_cuandoEmailEsInvalido` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el club se crea con un email sin formato válido
+
+**Pasos para reproducir**
+1. `curl -s -u AdminRoot:locos1234 -X POST http://localhost:8080/api/solicitudes -H ""Content-Type: application/json"" -d '{""tipo"":""CLUB"",""datosAdjuntos"":""{}""}'` y anotar el `id`.
+2. `curl -i -u AdminRoot:locos1234 -X POST http://localhost:8080/api/admin/club/{id} -H ""Content-Type: application/json"" -d '{""nombreInstitucion"":""Club X"",""direccion"":""Av 1"",""email"":""test@""}'`
+
+**Resultado esperado**
+HTTP 400 mencionando `email`.
+
+**Resultado obtenido**
+HTTP 201: el club se crea con `email = ""test@""` (los DTOs no tienen `@Email`).
+
+**Evidencia**
+`tests/postman/POSIBLES-BUGS.md` (#3); `docs/tests-backend.md` (BUG-02C).
+
+**Arreglo sugerido**
+Agregar `@Email` a `email` en `ClubRequestDTO` y `DeportistaRequestDTO`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02C._","bug","Sprint 4","leolopez373"
+"[Bug][Validación] Nombre de 256 caracteres pasa la validación web y falla en la base de datos","**Caso que lo detectó**
+TC-PA-14 (planilla, FAIL); JUnit `ClubRequestDTOValidationTest.debeFallar_cuandoNombreInstitucionSupera255Caracteres` y `DeportistaRequestDTOValidationTest.debeFallar_cuandoNombreSupera255Caracteres` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el usuario recibe un error de servidor en lugar de un 400 que indique el campo
+
+**Pasos para reproducir**
+1. Crear una solicitud de club.
+2. `POST /api/admin/club/{idSolicitud}` con `nombreInstitucion` de 256 caracteres.
+
+**Resultado esperado**
+HTTP 400 mencionando `nombreInstitucion` (nombre hasta 255 caracteres, supuesto 4 del plan).
+
+**Resultado obtenido**
+El DTO no limita el largo, así que la validación web no lo rechaza (el test de DTO falla). El rechazo ocurre recién en PostgreSQL por `varchar(255)` (confirmado por el test de persistencia); según `docs/tests-backend.md` eso termina en un error de servidor y no en un 400 que indique el campo.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-02D); `PersistenceIntegrationTest.debeFallarAlSuperarVarchar255EnBaseDeDatos_cuandoNombreSupera255Caracteres` (PASS: la BD rechaza); tests de DTO en rojo.
+
+**Arreglo sugerido**
+Agregar `@Size(max = 255)` a los campos de texto de los DTOs.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02D._","bug","Sprint 4","leolopez373"
+"[Bug][Admin] Al aprobar por /api/admin/* no se completa perfilCreadoId en la solicitud","**Caso que lo detectó**
+TC-DB-01 (planilla, NOT RUN); JUnit `AdminServiceTest.AprobarClubTests.debeAsignarPerfilCreadoIdASolicitud_cuandoSeApruebaClub` y `AdminServiceTest.AprobarDeportistaTests.debeAsignarPerfilCreadoIdASolicitud_cuandoSeApruebaDeportista` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — la solicitud aprobada queda sin referencia al perfil creado; se pierde la trazabilidad
+
+**Pasos para reproducir**
+1. Crear una solicitud de deportista.
+2. `POST /api/admin/deportista/{idSolicitud}` (201).
+3. `GET /api/solicitudes/{idSolicitud}` (o `SELECT estado, perfil_creado_id FROM solicitudes_registro WHERE id = {idSolicitud};`).
+
+**Resultado esperado**
+`estado = APROBADO` y `perfilCreadoId` igual al id del perfil creado.
+
+**Resultado obtenido**
+`AdminService.aprobarSolicitudDepo` y `aprobarSolicitudClub` nunca invocan `solicitud.setPerfilCreadoId(...)`. (La otra ruta, `PATCH /api/solicitudes/{id}/aprobar`, sí lo completa.)
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-03A); tests de JUnit en rojo.
+
+**Arreglo sugerido**
+Completar `perfilCreadoId` con el id del perfil creado, o unificar las dos rutas de aprobación en un único servicio.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-03A._","bug","Sprint 4","EDAN13512"
+"[Bug][Admin] AdminService no es transaccional: la solicitud queda APROBADO sin perfil y la API responde 500","**Caso que lo detectó**
+TC-DB-05 (planilla, FAIL); JUnit `AdminServiceTest.AprobarDeportistaTests.noDebeAprobarSolicitud_cuandoFallaCreacionDeportistaPorClubInexistente` (FAIL) y `AdminControllerTest.AprobarDeportistaEndpointTests.debeRetornar400_cuandoDeportistaTieneClubIdInexistente` (ERROR: 500 en lugar de 400).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Crítica — inconsistencia de datos sin solución alternativa: la solicitud queda cerrada y el perfil nunca se crea
+
+**Pasos para reproducir**
+1. Crear una solicitud de deportista.
+2. `POST /api/admin/deportista/{idSolicitud}` con `""clubId"": 999999`.
+3. Consultar la solicitud: `GET /api/solicitudes/{idSolicitud}`.
+
+**Resultado esperado**
+HTTP 400 y la solicitud sigue PENDIENTE (sin perfil creado).
+
+**Resultado obtenido**
+Respuesta 500 y la solicitud ya quedó APROBADO sin perfil: el servicio guarda el estado antes de crear el perfil y no tiene `@Transactional`.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-03B); tests de JUnit en rojo.
+
+**Arreglo sugerido**
+Marcar `AdminService` con `@Transactional`, crear el perfil antes de marcar APROBADO, y devolver 400 cuando el `clubId` no existe.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-03B._","bug","Sprint 4","EDAN13512"
+"[Bug][Solicitudes] Rechazar una solicitud pisa fechaEnvio y deja fechaRevision en null","**Caso que lo detectó**
+JUnit `SolicitudRegistroServiceTest.RechazarTests.debeRechazarSolicitudYAsignarFechaRevision_cuandoSeRechazaConMotivo` (FAIL); relacionado con TC-PA-04 (planilla, NOT RUN).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — se pierde la fecha original de envío
+
+**Pasos para reproducir**
+1. Crear una solicitud y anotar `fechaEnvio`.
+2. `PATCH /api/solicitudes/{id}/rechazar?motivo=prueba`.
+3. `GET /api/solicitudes/{id}` y comparar `fechaEnvio` y `fechaRevision`.
+
+**Resultado esperado**
+`fechaEnvio` sin cambios y `fechaRevision` con la fecha del rechazo.
+
+**Resultado obtenido**
+`SolicitudRegistroService.rechazar` ejecuta `setFechaEnvio(...)` en lugar de `setFechaRevision(...)`: se sobrescribe la fecha de envío y la de revisión queda nula.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-04); test de JUnit en rojo.
+
+**Arreglo sugerido**
+Reemplazar `setFechaEnvio` por `setFechaRevision` en `rechazar`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-04._","bug","Sprint 4","EDAN13512"
+"[Bug][Seguridad] Los errores 400 de POST /api/solicitudes llegan como 401 a un visitante sin credenciales","**Caso que lo detectó**
+TC-SR-07 (Newman, FAIL); mismo efecto en TC-SR-03, 04, 08, 09 y 10 ejecutados sin autenticación.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Crítica — el formulario público de registro nunca muestra el error de validación: el visitante no sabe qué corregir
+
+**Pasos para reproducir**
+1. `curl -i -X POST http://localhost:8080/api/solicitudes -H ""Content-Type: application/json"" -d '{""tipo"":""EQUIPO"",""datosAdjuntos"":""{}""}'` (sin credenciales).
+2. Repetir con `-u AdminRoot:locos1234`.
+3. Repetir sin credenciales con `{""tipo"":null,""datosAdjuntos"":""{}""}`, con `datosAdjuntos` vacío y con JSON malformado.
+
+**Resultado esperado**
+HTTP 400 con el error de validación (CA-5.2), con o sin credenciales: el endpoint es público.
+
+**Resultado obtenido**
+Sin credenciales: HTTP 401. Con credenciales de admin: HTTP 400. Los tests de JUnit (MockMvc) pasan porque no reproducen este comportamiento.
+
+**Evidencia**
+`tests/postman/POSIBLES-BUGS.md` (#4); `tests/postman/CrazySports.postman_collection.json` → `TC-SR-07`.
+
+**Arreglo sugerido**
+Hipótesis a verificar: Spring Boot reenvía el error a `/error` y `SecurityConfig` no lo permite (`anyRequest().authenticated()`). Probar `permitAll()` para `/error` y verificarlo con el caso TC-SR-07 de Newman, que es el que lo detecta.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: API-401._","bug","Sprint 4","leolopez373"
+"[Bug][UI] Los perfiles aprobados no aparecen en /clubes y /deportistas hasta recargar la página","**Caso que lo detectó**
+TC-IT-01 y TC-IT-02 (planilla, FAIL; Playwright, FAIL: `tests/e2e/specs/alta-por-api.spec.ts`).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — solo si se confirma que la actualización sin recargar es un requisito (la planilla pide confirmarlo con el equipo)
+
+**Pasos para reproducir**
+1. Abrir `http://localhost:5173/clubes` (o `/deportistas`) y dejar la pestaña abierta.
+2. Aprobar una solicitud (`POST /api/admin/club/{id}`).
+3. Esperar hasta 30 s sin recargar.
+
+**Resultado esperado**
+La card del club (o deportista) aparece sin recargar, esperando hasta 30 s (TC-IT-01 y TC-IT-02).
+
+**Resultado obtenido**
+A los 30 s no hay ninguna card nueva; aparece recién al recargar. `useClubes` y `useDeportistas` descargan el listado una sola vez al montar la página (sin polling ni refetch).
+
+**Evidencia**
+`tests/e2e/BUGS-E2E.md` (E2E-01 y E2E-02); screenshot, video y trace en `tests/e2e/evidencia-bugs/E2E-01-club-no-aparece-sin-recargar/` y `E2E-02-deportista-no-aparece-sin-recargar/`.
+
+**Arreglo sugerido**
+Agregar polling/refetch (o refetch al volver el foco a la pestaña) en los hooks. Si el equipo decide que no es un requisito, cerrar el Issue y ajustar el esperado de TC-IT-01/02.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: E2E-01/E2E-02._","bug","Sprint 4","joaquinBrassinne"
+"[Bug][UI] El mensaje de ""sin resultados"" no lleva el punto final esperado","**Caso que lo detectó**
+TC-VP-04 (Playwright, FAIL: `tests/e2e/specs/clubes.spec.ts`, «El mensaje de sin resultados es exactamente…»).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — defecto de texto que no afecta la función
+
+**Pasos para reproducir**
+1. Abrir `http://localhost:5173/clubes`.
+2. Buscar `xxxxxxxxxxx`.
+
+**Resultado esperado**
+«No se encontraron clubes.» (con punto final, TC-VP-04 y CA-3.3).
+
+**Resultado obtenido**
+«No se encontraron clubes» (sin punto). `/deportistas` tiene el mismo patrón («No se encontraron deportistas»).
+
+**Evidencia**
+`tests/e2e/BUGS-E2E.md` (E2E-03); screenshot, video y trace en `tests/e2e/evidencia-bugs/E2E-03-mensaje-sin-punto-final/`. Nota: la planilla registró como PASS el texto sin punto, así que esperado y resultado ya eran inconsistentes.
+
+**Arreglo sugerido**
+Agregar el punto en `ClubesPage.tsx` y `DeportistasPage.tsx`, o corregir el esperado de la planilla y de CA-3.3 si el texto sin punto es el correcto.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: E2E-03._","bug","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] Contraste insuficiente del texto secundario en todas las pantallas","**Caso que lo detectó**
+axe en todas las pantallas (`axe-*.json`); Lighthouse `color-contrast`.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — texto con 3,5 a 4,15:1; el mínimo es 4,5:1
+
+**Pasos para reproducir**
+1. `npm run test:a11y` y abrir `tests/a11y/reports/axe-home.json` → `violations`.
+2. O abrir `/clubes` en Chrome DevTools, inspeccionar «Institución deportiva registrada…» y mirar la relación de contraste del selector de color.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.4.3 Contraste (mínimo), AA.
+
+**Resultado obtenido**
+axe `color-contrast` (serious) en las 16 pantallas/estados auditados. La clase `text-neutral-500` (`#737373`) mide entre 3,47:1 y 4,15:1 sobre los fondos oscuros (por ejemplo `#737373` sobre `#161616` = 3,81:1 en 12 px). Ejemplos: «Sugerir Deportista (próximamente)», «Institución deportiva registrada en Río Tercero.», textos de ayuda del formulario.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-01); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Reemplazar `text-neutral-500` por `text-neutral-400` (`#a3a3a3`, ≈ 6,5:1 o más según el cálculo; confirmar con axe) en el texto informativo, y revisar también los placeholders (`placeholder:text-neutral-500`).
+
+**Pantalla:** Todas (Home, /clubes, /deportistas, /buscar, /mapa, /solicitud, /login, /admin)
+**Criterio WCAG:** 1.4.3 Contraste (mínimo), AA
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-01._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] /login: el texto que se escribe es casi invisible y el botón y el error tienen poco contraste","**Caso que lo detectó**
+Spec `A11Y-LOGIN` (axe).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el administrador no ve lo que escribe
+
+**Pasos para reproducir**
+1. Ir a `/login`.
+2. Escribir en «Usuario»: el texto se ve casi blanco sobre blanco.
+3. Enviar credenciales inválidas: el mensaje rojo tiene poco contraste.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.4.3 Contraste (mínimo), AA.
+
+**Resultado obtenido**
+axe (`axe-login-error.json`): el texto del campo Usuario es `#e5e5e5` sobre `#ffffff` = 1,25:1 (el `<input>` hereda el gris claro del `body`); botón «Ingresar» blanco sobre `#3b82f6` = 3,67:1; mensaje de error `#ef4444` sobre blanco = 3,76:1.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-02); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Definir `color` oscuro en los `<input>` (por ejemplo `#111827`), botón con fondo `#2563eb` (≈ 5,2:1 con blanco) y error con `#b91c1c` o más oscuro.
+
+**Pantalla:** /login
+**Criterio WCAG:** 1.4.3 Contraste (mínimo), AA
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-02._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] /login: los campos no tienen etiqueta (solo placeholder)","**Caso que lo detectó**
+Diagnóstico de apoyo (`tests/a11y/diagnostico-manual.mjs`).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el placeholder desaparece al escribir y no es una etiqueta
+
+**Pasos para reproducir**
+1. Ir a `/login`.
+2. Escribir algo en «Usuario»: ya no queda ninguna indicación visible de qué campo es.
+3. Con un lector de pantalla, comprobar qué anuncia al enfocar el campo.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 Información y relaciones (A).
+
+**Resultado obtenido**
+Diagnóstico (`diagnostico-manual.json` → `login`): los dos `<input>` no tienen `<label>`, `aria-label`, `aria-labelledby` ni `title`. axe no lo marca porque acepta el placeholder como nombre accesible.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-03); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Agregar `<label htmlFor>` visible (o `aria-label`) y `autocomplete=""username""` / `""current-password""`.
+
+**Pantalla:** /login
+**Criterio WCAG:** 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 Información y relaciones (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-03._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] /login: el foco del teclado no se ve","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — quien navega con teclado no sabe en qué campo está
+
+**Pasos para reproducir**
+1. Ir a `/login`.
+2. Pulsar Tab hasta «Usuario» y «Contraseña»: no cambia nada visible.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 2.4.7 Foco visible, AA.
+
+**Resultado obtenido**
+Diagnóstico (`loginFoco`): al enfocar «Usuario», el `<input>` tiene `outline-style: none` y `box-shadow: none`, y el contenedor conserva el mismo borde. Los estilos son inline (`outline: 'none'`).
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-04); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Quitar `outline: 'none'` y definir un indicador `:focus-visible` (borde o sombra de 2 px con contraste ≥ 3:1) en el contenedor del campo.
+
+**Pantalla:** /login
+**Criterio WCAG:** 2.4.7 Foco visible, AA
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-04._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] Los mensajes de error de /login y /solicitud no se asocian al campo ni se anuncian","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — con lector de pantalla no se sabe que hubo un error ni en qué campo
+
+**Pasos para reproducir**
+1. `/solicitud` → «ENVIAR SOLICITUD DE REGISTRO» sin completar nada.
+2. Con un lector de pantalla no se anuncia qué falló ni en qué campo.
+3. Igual en `/login` con credenciales inválidas.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.3.1 Identificación de errores (A) y 4.1.3 Mensajes de estado (AA).
+
+**Resultado obtenido**
+Diagnóstico: en `/login` el error es un `<p>` sin `role` ni `aria-live`. En `/solicitud`, tras enviar vacío: 2 campos con `aria-invalid=""true""`, 0 con `aria-describedby`, 0 elementos `role=""alert""`, 0 regiones `aria-live`; el foco queda en el botón.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-05); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+`role=""alert""` en el mensaje de `/login`; en `FormField`, `aria-describedby` apuntando al texto del error y mover el foco al primer campo inválido (o a un resumen con `role=""alert""`).
+
+**Pantalla:** /login y /solicitud
+**Criterio WCAG:** 3.3.1 Identificación de errores (A) y 4.1.3 Mensajes de estado (AA)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-05._","bug,accesibilidad","Sprint 4","EDAN13512"
+"[Bug][Accesibilidad] Los modales de club y deportista no tienen semántica de diálogo y el botón cerrar no tiene nombre","**Caso que lo detectó**
+Specs `A11Y-CLUBES` y `A11Y-DEPORTISTAS` con el modal abierto (axe).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — se puede cerrar con Escape, pero un lector de pantalla no anuncia el diálogo
+
+**Pasos para reproducir**
+1. `/clubes` → Tab hasta «Ver más» → Enter.
+2. Se abre el modal pero un lector de pantalla no lo anuncia y Tab sigue recorriendo la página de atrás.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 4.1.2 Nombre, función, valor (A) y 2.4.3 Orden del foco (A).
+
+**Resultado obtenido**
+axe `button-name` (critical) en `axe-clubes-modal.json` y `axe-deportistas-modal.json`: el botón cerrar es solo un SVG. Diagnóstico: sin `role=""dialog""`, `aria-modal` ni `aria-labelledby`; al abrir, el foco no entra al modal (el elemento activo sigue siendo «Ver más»).
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-06); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+`role=""dialog"" aria-modal=""true"" aria-labelledby=<id del título>`, `aria-label=""Cerrar""` en el botón, mover el foco al diálogo al abrir y atraparlo mientras esté abierto (o usar `<dialog>`).
+
+**Pantalla:** /clubes («Ver más») y /deportistas («Ver perfil»)
+**Criterio WCAG:** 4.1.2 Nombre, función, valor (A) y 2.4.3 Orden del foco (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-06._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] El toggle «Deporte Inclusivo / Adaptado» no se puede usar con teclado y no expone rol ni estado","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — una función de filtrado queda inaccesible para quien no usa mouse
+
+**Pasos para reproducir**
+1. Abrir `/clubes`.
+2. Recorrer la página con Tab: el toggle nunca se enfoca; con el teclado no hay forma de activar el filtro.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 2.1.1 Teclado (A) y 4.1.2 Nombre, función, valor (A).
+
+**Resultado obtenido**
+Diagnóstico (`toggle`): es un `<div onClick>` dentro de un `<label for=""toggle-adaptado"">` que apunta a un id inexistente; `role`, `tabindex` y `aria-checked` son null y no recibió foco tras 40 pulsaciones de Tab. Medido en `/clubes`; `/deportistas` tiene el mismo markup.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-07); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Usar `<input type=""checkbox"" role=""switch"" id=""toggle-adaptado"">` (o `<button role=""switch"" aria-checked>`) con su `<label>` y estilos `:focus-visible`.
+
+**Pantalla:** /clubes y /deportistas
+**Criterio WCAG:** 2.1.1 Teclado (A) y 4.1.2 Nombre, función, valor (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-07._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] <html lang=""en""> con contenido en español","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — los lectores de pantalla leerían el español con pronunciación inglesa
+
+**Pasos para reproducir**
+1. Abrir cualquier pantalla.
+2. Inspeccionar `<html>`: `lang=""en""`.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.1.1 Idioma de la página, A.
+
+**Resultado obtenido**
+`Frontend/index.html` línea 2: `<html lang=""en"">`; el diagnóstico confirma `htmlLang = ""en""` en las 8 pantallas. axe no lo marca porque `en` es un código válido.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-08); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Cambiar a `<html lang=""es"">` (o `es-AR`).
+
+**Pantalla:** Todas (`Frontend/index.html`)
+**Criterio WCAG:** 3.1.1 Idioma de la página, A
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-08._","bug,accesibilidad","Sprint 4","joaquinBrassinne"
+"[Bug][Accesibilidad] Todas las rutas tienen el mismo título de página","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — el título no distingue las pantallas
+
+**Pasos para reproducir**
+1. Navegar entre pantallas.
+2. Mirar la pestaña del navegador o el historial.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 2.4.2 Página titulada, A.
+
+**Resultado obtenido**
+Diagnóstico: `document.title = ""Deporte Río Tercero""` en las 8 rutas.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-09); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Actualizar `document.title` por ruta («Clubes · Deporte Río Tercero», «Solicitud de registro · …»).
+
+**Pantalla:** Todas
+**Criterio WCAG:** 2.4.2 Página titulada, A
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-09._","bug,accesibilidad","Sprint 4","joaquinBrassinne"
+"[Bug][Accesibilidad] Estructura de encabezados incompleta o con saltos","**Caso que lo detectó**
+Lighthouse y diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — afecta la navegación por encabezados con lector de pantalla
+
+**Pasos para reproducir**
+1. En cada pantalla ejecutar `document.querySelectorAll(""h1,h2,h3"")` o usar la extensión HeadingsMap.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.3.1 Información y relaciones (A) y 2.4.6 Encabezados y etiquetas (AA).
+
+**Resultado obtenido**
+Lighthouse `heading-order` falla en `/clubes` y `/deportistas` (escritorio y móvil). Diagnóstico: `/mapa` y `/login` tienen 0 `<h1>`.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-10); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Un `<h1>` por pantalla; `<h3>` solo bajo un `<h2>` (en los listados, un `<h2 class=""sr-only"">` resuelve el salto sin cambiar el diseño).
+
+**Pantalla:** /mapa y /login (sin h1); /clubes y /deportistas (saltan de h1 a h3)
+**Criterio WCAG:** 1.3.1 Información y relaciones (A) y 2.4.6 Encabezados y etiquetas (AA)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-10._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] Landmarks duplicados en /admin y /buscar","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — axe lo clasifica como buena práctica; no entra en las etiquetas WCAG usadas
+
+**Pasos para reproducir**
+1. Con un lector de pantalla, listar las regiones; o `document.querySelectorAll(""main"").length` en `/admin`.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.3.1 Información y relaciones (técnicas ARIA11/ARIA13).
+
+**Resultado obtenido**
+Diagnóstico (`paginas[""/admin""].landmarks` y `paginas[""/buscar""].landmarks`). En `/admin` el layout global (Navbar y Footer) convive con el layout propio del panel.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-11); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Un solo `<main>` por página y `aria-label` para distinguir los dos `<nav>` del panel.
+
+**Pantalla:** /admin (2 header, 2 nav, 2 main) y /buscar (2 main)
+**Criterio WCAG:** 1.3.1 Información y relaciones (técnicas ARIA11/ARIA13)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-11._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] El campo «Otras disciplinas» del formulario de club no tiene etiqueta","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — un campo sin nombre accesible entre 11
+
+**Pasos para reproducir**
+1. `/solicitud` → pestaña «Soy un club».
+2. Inspeccionar ese input.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 (A).
+
+**Resultado obtenido**
+Diagnóstico (`solicitudErrores`): 1 de 11 campos sin `label` ni `aria-label`: el `<input>` con placeholder «Otras disciplinas (separadas por coma, ej: Padel, Ciclismo)».
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-12); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Agregar `aria-label=""Otras disciplinas""` (o un `<label>` visible).
+
+**Pantalla:** /solicitud (formulario de club)
+**Criterio WCAG:** 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-12._","bug,accesibilidad","Sprint 4","EDAN13512"
