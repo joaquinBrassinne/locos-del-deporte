@@ -1,0 +1,1003 @@
+﻿"Título","Cuerpo","Etiquetas","Milestone","Asignado"
+"AUT-BE-01 Tests unitarios de los servicios con Mockito","**Descripción**
+Automatizar con JUnit 5 y Mockito las reglas de negocio de `ClubService`, `DeportistaService`, `SolicitudRegistroService` y `AdminService`, sin levantar Spring ni base de datos.
+
+**Criterios de aceptación**
+- [ ] Hay tests para crear, listar, buscar, actualizar y eliminar clubes y deportistas.
+- [ ] Hay tests para enviar, aprobar y rechazar solicitudes, incluidos los estados inválidos (aprobar/rechazar una solicitud que no está PENDIENTE) y los ids inexistentes.
+- [ ] Los nombres siguen el formato `debeX_cuandoY` y se mapean a los casos de la planilla en `docs/matriz-trazabilidad.csv`.
+- [ ] Los resultados esperados salen de la planilla y los criterios de aceptación, no del comportamiento actual.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 56 tests; 4 fallan porque detectan los bugs de `AdminService` (perfilCreadoId, transaccionalidad) y de `SolicitudRegistroService.rechazar`.
+
+**Evidencia / archivos**
+`Backend/src/test/java/com/pp2/crazySports/service/` (ClubServiceTest, DeportistaServiceTest, SolicitudRegistroServiceTest, AdminServiceTest); `docs/tests-backend.md`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"AUT-BE-02 Tests de validación de DTOs con clases de equivalencia y valores límite","**Descripción**
+Verificar con Bean Validation los DTOs de entrada (`ClubRequestDTO`, `DeportistaRequestDTO`, `SolicitudRequestDTO`) aplicando partición de equivalencia y análisis de valores límite.
+
+**Criterios de aceptación**
+- [ ] Hay un caso válido y un caso inválido por cada campo obligatorio (nombre, dirección, deporte, tipo, datosAdjuntos).
+- [ ] Hay valores límite para la edad (-1, 0, 1, 120, 150) y para el largo del nombre (255 y 256 caracteres).
+- [ ] Hay casos de formato para email y teléfono.
+- [ ] Los tests que fallan por una validación faltante no se ajustan: se enlaza el Issue `bug` correspondiente.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 20 tests; 7 fallan por validaciones que no existen (edad máxima, teléfono con letras, email, largo del nombre).
+
+**Evidencia / archivos**
+`Backend/src/test/java/com/pp2/crazySports/dto/`; Issues de validación del Sprint 4.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","leolopez373"
+"AUT-BE-03 Tests de controllers y seguridad con MockMvc","**Descripción**
+Automatizar los códigos HTTP y las reglas de acceso de cada endpoint (público, autenticado y rol ADMIN) con `@SpringBootTest`, MockMvc y `spring-security-test`.
+
+**Criterios de aceptación**
+- [ ] Cada endpoint público responde 200/201 sin credenciales.
+- [ ] Cada endpoint protegido responde 401 sin credenciales y 200/201/204 con el admin.
+- [ ] Los ids inexistentes se verifican contra 404 (CA-10.3).
+- [ ] Las validaciones de entrada se verifican contra 400.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 72 tests (62 de controllers y 10 de `SecurityConfigTest`); 13 fallan, casi todos por el 404 que hoy llega como 500 o 400.
+
+**Evidencia / archivos**
+`Backend/src/test/java/com/pp2/crazySports/controller/` y `.../config/SecurityConfigTest.java`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","leolopez373"
+"AUT-BE-04 Tests de persistencia con Testcontainers (PostgreSQL 16)","**Descripción**
+Verificar repositorios y restricciones de la base contra un PostgreSQL 16 real levantado por Testcontainers, aislado de la base de desarrollo.
+
+**Criterios de aceptación**
+- [ ] Hay tests de guardado y consulta de club, deportista (con su club), solicitud y administrador.
+- [ ] Hay tests de búsqueda por nombre sin distinguir mayúsculas y de filtro por deporte adaptado.
+- [ ] Hay un test de la restricción `varchar(255)`.
+- [ ] Los tests corren con el perfil `test` (`create-drop`) sin tocar `locos_deporte`.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 8 tests de persistencia más `contextLoads`; todos pasan.
+
+**Evidencia / archivos**
+`Backend/src/test/java/com/pp2/crazySports/repository/PersistenceIntegrationTest.java`; `Backend/src/test/resources/application-test.properties`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","EDAN13512"
+"AUT-BE-05 Umbral de cobertura con JaCoCo y falla del build ante tests rojos","**Descripción**
+Definir un umbral mínimo de cobertura y hacer que el build falle cuando baje o cuando haya tests rojos. Hoy el `pom.xml` tiene `testFailureIgnore=true`, así que `mvn test` termina con éxito aunque haya fallos.
+
+**Criterios de aceptación**
+- [ ] El `pom.xml` define una regla de JaCoCo (`check`) con un umbral mínimo acordado por el equipo.
+- [ ] Se decide qué hacer con `testFailureIgnore`: quitarlo o mantener el paso del pipeline que falla ante failures/errors.
+- [ ] El reporte HTML de JaCoCo se sigue generando en `Backend/target/site/jacoco/`.
+- [ ] El pipeline sube el reporte como artifact.
+
+**Estado al 29/10/2026**
+Pendiente. El reporte de JaCoCo ya se genera en `mvn test`; el workflow `tests.yml` falla ante failures/errors leyendo los reportes de Surefire, pero el umbral no está definido.
+
+**Evidencia / archivos**
+`Backend/pom.xml`; `.github/workflows/tests.yml`; `docs/tests-backend.md` (métricas de cobertura).
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"AUT-BE-06 Cubrir los casos pendientes TC-SR-10 y TC-DB-06","**Descripción**
+Automatizar los dos casos de backend que la planilla de automatización marca como automatizables y sin test: el body vacío en el alta de solicitud (TC-SR-10) y la integridad de `datosAdjuntos` al aprobar (TC-DB-06).
+
+**Criterios de aceptación**
+- [ ] TC-SR-10: `POST /api/solicitudes` con `{}` devuelve 400 y nunca 500, y no crea ninguna solicitud.
+- [ ] TC-DB-06: tras aprobar, `datosAdjuntos` de la solicitud es idéntico al original en la base de datos.
+- [ ] Ambos tests están en la matriz de trazabilidad con su caso.
+
+**Estado al 29/10/2026**
+Pendiente. Figuran como `PENDIENTE` en `docs/planilla-automatizacion.csv`.
+
+**Evidencia / archivos**
+`docs/planilla-automatizacion.csv`; `docs/matriz-trazabilidad.csv`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","EDAN13512"
+"AUT-API-01 Colección Postman v2.1 con el CRUD de clubes y deportistas","**Descripción**
+Automatizar con una colección Postman v2.1 el CRUD de clubes y deportistas. El alta pasa por solicitud más aprobación del admin; la actualización y la baja usan `PUT` y `DELETE`.
+
+**Criterios de aceptación**
+- [ ] La colección tiene carpetas por recurso (Clubes y Deportistas).
+- [ ] Cada request se llama con el ID del caso de la planilla (por ejemplo «TC-API-02 Actualizar un club sin credenciales»).
+- [ ] Cada request verifica código HTTP, campos del body, tiempo de respuesta menor a 1000 ms y cabecera Content-Type.
+- [ ] Los ids se guardan en variables para encadenar requests.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 27 casos (63 requests con pasos auxiliares); 4 casos fallan por bugs reales.
+
+**Evidencia / archivos**
+`tests/postman/CrazySports.postman_collection.json`; `tests/postman/README.md`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"AUT-API-02 Casos negativos de seguridad y validación en la colección","**Descripción**
+Cubrir los casos negativos: 401 sin credenciales y con contraseña incorrecta, 404 con id inexistente (999999) y 400 con body inválido (nombre vacío, edad 0 y -1, email «test@», tipo «EQUIPO»).
+
+**Criterios de aceptación**
+- [ ] Hay un request por cada caso negativo, con el esperado de la planilla.
+- [ ] Si un caso falla contra el backend real, no se cambia el esperado: queda en `tests/postman/POSIBLES-BUGS.md`.
+- [ ] Cada fallo tiene su Issue `bug`.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. Detectó 4 posibles bugs: dos 404 que llegan como 500, el email inválido aceptado y los 400 que llegan como 401 a un visitante.
+
+**Evidencia / archivos**
+`tests/postman/POSIBLES-BUGS.md`; `tests/postman/CrazySports.postman_collection.json`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"AUT-API-03 Casos de autenticación TC-AU-01 a TC-AU-10","**Descripción**
+Automatizar la hoja «Autenticación» de la planilla: credenciales válidas, contraseña incorrecta, usuario inexistente, contraseña vacía, header malformado y endpoints públicos.
+
+**Criterios de aceptación**
+- [ ] Cada caso de la hoja tiene su request con el ID del caso.
+- [ ] Los casos de acceso sin credenciales verifican además que la solicitud no cambió de estado.
+- [ ] TC-AU-11 (admin por defecto al iniciar) queda cubierto por `AdminCreadoTest`, porque no es automatizable por API.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. Los 10 casos pasan.
+
+**Evidencia / archivos**
+`tests/postman/CrazySports.postman_collection.json` (carpeta Autenticación); `Backend/src/test/java/.../config/AdminCreadoTest.java`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","leolopez373"
+"AUT-API-04 Entorno, datos de prueba DS-01 y limpieza de datos","**Descripción**
+Dejar el entorno de ejecución reproducible: archivo de entorno, carga de los datos DS-01 por API y limpieza de lo que crea cada flujo.
+
+**Criterios de aceptación**
+- [ ] `tests/postman/entorno-local.postman_environment.json` define `baseUrl`, `adminUser`, `adminPassword`, `idSolicitud`, `idClub` e `idDeportista`.
+- [ ] `node tests/postman/seed-ds01.js` carga los 3 clubes y 4 deportistas aprobados y los pendientes.
+- [ ] Cada flujo termina con un CLEANUP; la limitación (la API no tiene DELETE de solicitudes) está documentada con su SQL de limpieza.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge.
+
+**Evidencia / archivos**
+`tests/postman/entorno-local.postman_environment.json`; `tests/postman/seed-ds01.js`; `tests/postman/README.md`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","EDAN13512"
+"AUT-API-05 Ejecutar Newman y JUnit en cada pull request con reportes","**Descripción**
+Correr las pruebas de backend y de API en cada PR con GitHub Actions: PostgreSQL 16 como service container, backend levantado, Newman con reporte htmlextra y JUnit con JaCoCo, y los reportes subidos como artifacts siempre.
+
+**Criterios de aceptación**
+- [ ] El workflow corre en cada `pull_request`.
+- [ ] El job falla si algún test falla, pero los artifacts se suben siempre (`if: always()`).
+- [ ] Se publican los artifacts del reporte de Newman, JaCoCo y Surefire.
+- [ ] El README explica cómo descargar los artifacts.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. El workflow se validó localmente (YAML, shell y conteo de Surefire); todavía no se ejecutó en GitHub Actions.
+
+**Evidencia / archivos**
+`.github/workflows/tests.yml`; README (sección «Tests automáticos en Pull Requests»).
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"AUT-E2E-01 Configurar Playwright en TypeScript con Page Object Model","**Descripción**
+Dejar configurado Playwright Test en `tests/e2e` con `baseURL` http://localhost:5173, trace `on-first-retry`, video y screenshot en los fallos, reporter HTML y una clase de Page Object por pantalla.
+
+**Criterios de aceptación**
+- [ ] Existen `HomePage`, `ClubesPage` y `DeportistasPage` en `tests/e2e/pages/` y los specs en `tests/e2e/specs/`.
+- [ ] Un fallo real deja trace, video y screenshot.
+- [ ] Hay un fixture de API que crea datos y los elimina al terminar cada test.
+- [ ] Hay scripts de npm para ejecutar la suite y abrir el reporte.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge.
+
+**Evidencia / archivos**
+`tests/e2e/playwright.config.ts`; `tests/e2e/pages/`; `tests/e2e/fixtures/`; `tests/e2e/README.md`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"AUT-E2E-02 Flujo 1: listar y buscar clubes","**Descripción**
+Automatizar en la UI el listado y la búsqueda de clubes, con clases de equivalencia y valores límite (incluye «Club Atlético» y la búsqueda sin tilde: TC-VP-03 y TC-VP-12).
+
+**Criterios de aceptación**
+- [ ] Se listan exactamente los 3 clubes aprobados y ninguno pendiente.
+- [ ] La búsqueda funciona por nombre y por disciplina, sin distinguir mayúsculas ni tildes.
+- [ ] Hay casos de límite: vacío, solo espacios, 1 carácter, 300 caracteres, inyección SQL y HTML.
+- [ ] Sin resultados se muestra «No se encontraron clubes.».
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 24 tests; 1 falla (el mensaje sin resultados no lleva el punto final).
+
+**Evidencia / archivos**
+`tests/e2e/specs/clubes.spec.ts`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","cynthiamolina081-png"
+"AUT-E2E-03 Flujo 2a: filtro «Deporte Inclusivo / Adaptado»","**Descripción**
+Automatizar el filtro de deporte inclusivo en clubes y deportistas, solo y combinado con la búsqueda (TC-VP-05, TC-VP-06 y TC-VP-16).
+
+**Criterios de aceptación**
+- [ ] Activar el filtro muestra solo los registros con `deporteAdaptado = true` y el switch queda activo.
+- [ ] Desactivarlo vuelve a mostrar todos.
+- [ ] Combinado con la búsqueda se muestra la intersección.
+- [ ] Para deportistas, el test crea su propio deportista adaptado y lo elimina al terminar.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 6 tests; todos pasan.
+
+**Evidencia / archivos**
+`tests/e2e/specs/inclusivo-y-deportistas.spec.ts` (Flujo 2a y 2c).
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","cynthiamolina081-png"
+"AUT-E2E-04 Flujo 2b: búsqueda de deportistas sin distinguir tildes","**Descripción**
+Automatizar la búsqueda de deportistas por deporte y nombre, con y sin tilde y en mayúsculas o minúsculas (TC-VP-07 y TC-VP-10).
+
+**Criterios de aceptación**
+- [ ] «Fútbol», «Futbol», «futbol» y «FÚTBOL» devuelven a Lucía Pérez y Sofía Díaz.
+- [ ] Hay casos con nombre, apellido parcial, deporte inexistente y entradas especiales.
+- [ ] Se listan exactamente los 4 deportistas aprobados y no el pendiente.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 18 tests; todos pasan.
+
+**Evidencia / archivos**
+`tests/e2e/specs/inclusivo-y-deportistas.spec.ts` (Flujo 2b).
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","cynthiamolina081-png"
+"AUT-E2E-05 Flujo 3: alta por API y verificación en la UI","**Descripción**
+Crear por API una solicitud, aprobarla con el admin y verificar que el perfil aparece en la UI. Cubre también las solicitudes pendientes y rechazadas, que no deben aparecer (TC-IT-01, 02, 03 y 06).
+
+**Criterios de aceptación**
+- [ ] Un club o deportista aprobado aparece con sus datos (dirección, disciplinas, deporte, logros).
+- [ ] La aprobación por `POST /api/admin/...` y por `PATCH /api/solicitudes/{id}/aprobar` funciona.
+- [ ] Una solicitud pendiente o rechazada no aparece.
+- [ ] Cada test elimina lo que crea.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 7 tests; 2 fallan porque la UI no se actualiza sin recargar.
+
+**Evidencia / archivos**
+`tests/e2e/specs/alta-por-api.spec.ts`; `tests/e2e/BUGS-E2E.md`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","EDAN13512"
+"AUT-E2E-06 Home: estadísticas y pills, y control de CORS","**Descripción**
+Automatizar los contadores y las pills del home (TC-VP-08 y TC-VP-09) y agregar la verificación de que no hay errores de CORS entre el frontend y el backend (TC-IT-05).
+
+**Criterios de aceptación**
+- [ ] Los 4 contadores coinciden con DS-01 (3 clubes, 4 deportistas, 3 disciplinas, 1 inclusivo).
+- [ ] Un alta suma +1 donde corresponde.
+- [ ] La pill «Fútbol» muestra solo a Lucía Pérez y Sofía Díaz.
+- [ ] TC-IT-05: en `/`, `/clubes` y `/deportistas` la consola no muestra errores de CORS y las peticiones a :8080 devuelven 200.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. Los 3 tests del home pasan; TC-IT-05 está pendiente (no existe el test).
+
+**Evidencia / archivos**
+`tests/e2e/specs/home.spec.ts`; `docs/planilla-automatizacion.csv`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","cynthiamolina081-png"
+"AUT-E2E-07 Ejecutar la suite E2E en el pipeline de CI","**Descripción**
+Agregar al workflow la ejecución de Playwright: levantar el frontend y el backend, cargar DS-01, correr los tests y subir el reporte HTML, el trace y el video aunque falle algún test.
+
+**Criterios de aceptación**
+- [ ] El pipeline levanta el frontend (Vite) y ejecuta `npm run test:e2e`.
+- [ ] El artifact `playwright-report` incluye reporte, trace y video de los fallos.
+- [ ] El job falla si algún test E2E falla.
+- [ ] El tiempo total del pipeline se mantiene razonable (hoy la suite E2E tarda unos 3,5 min).
+
+**Estado al 29/10/2026**
+Pendiente. Hoy el workflow solo corre Newman y JUnit; el paso de subida de artifacts de Playwright ya está preparado.
+
+**Evidencia / archivos**
+`.github/workflows/tests.yml`; `tests/e2e/`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","automatizacion","Sprint 4","joaquinBrassinne"
+"ACC-01 Integrar axe-core en Playwright con un spec por pantalla","**Descripción**
+Correr axe con las etiquetas wcag2a, wcag2aa y wcag22aa sobre cada pantalla principal (Home, `/clubes`, `/deportistas`, `/buscar`, `/mapa`, `/solicitud`, `/login`, `/admin`) y guardar el resultado en `tests/a11y/reports/`.
+
+**Criterios de aceptación**
+- [ ] Hay un spec por pantalla.
+- [ ] Cada ejecución guarda el JSON completo en `tests/a11y/reports/axe-*.json`.
+- [ ] El esperado es 0 violaciones: un spec que falla se reporta como bug y no se ajusta.
+- [ ] Se cubren los estados relevantes (modales, sin resultados, errores de validación).
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 16 tests; los 16 fallan hoy (contraste en todas las pantallas y `button-name` en los modales).
+
+**Evidencia / archivos**
+`tests/e2e/specs/a11y/`; `tests/e2e/fixtures/axe.ts`; `tests/a11y/reports/`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","accesibilidad","Sprint 4","cynthiamolina081-png"
+"ACC-02 Medir accesibilidad y rendimiento con Lighthouse en escritorio y móvil","**Descripción**
+Correr Lighthouse (categorías Accesibilidad y Rendimiento) en escritorio y móvil sobre cada pantalla y guardar los reportes HTML en `tests/a11y/reports/`.
+
+**Criterios de aceptación**
+- [ ] Hay un script reproducible (`npm run a11y:lighthouse`) que usa el build de producción.
+- [ ] Los reportes de las 7 pantallas públicas existen en ambos modos.
+- [ ] `/admin` se mide a mano desde Chrome DevTools con sesión iniciada, y el resultado se agrega al informe.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. 14 reportes generados. `/admin` quedó sin medir porque requiere sesión.
+
+**Evidencia / archivos**
+`tests/a11y/lighthouse.mjs`; `tests/a11y/reports/lighthouse-*.html`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","accesibilidad","Sprint 4","joaquinBrassinne"
+"ACC-03 Informe de accesibilidad con resumen y hallazgos","**Descripción**
+Redactar el informe de accesibilidad con el resumen de axe y Lighthouse por pantalla y los hallazgos listos para convertirse en Issues (pantalla, criterio WCAG, severidad, pasos y arreglo).
+
+**Criterios de aceptación**
+- [ ] Existe `docs/informe-accesibilidad.md` con los resultados por pantalla.
+- [ ] Cada hallazgo indica pantalla, criterio WCAG, severidad del plan, pasos para reproducir y arreglo sugerido.
+- [ ] Cada hallazgo tiene su Issue con las etiquetas `bug` y `accesibilidad`.
+
+**Estado al 29/10/2026**
+Implementado en la rama `worktree-claude-md-init`; falta abrir el PR, la revisión y el merge. El informe tiene 12 hallazgos (H-01 a H-12).
+
+**Evidencia / archivos**
+`docs/informe-accesibilidad.md`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","accesibilidad","Sprint 4","joaquinBrassinne"
+"ACC-04 Completar el checklist manual WCAG 2.2 AA","**Descripción**
+Completar a mano, con teclado y lector de pantalla, el checklist WCAG 2.2 AA del informe: navegación por teclado, foco visible, contraste, alt de imágenes, labels de formularios, jerarquía de encabezados, zoom al 200 % y mensajes de error.
+
+**Criterios de aceptación**
+- [ ] Una persona revisa cada casilla y la marca solo si la verificó.
+- [ ] Las pantallas se prueban con NVDA o VoiceOver y en un móvil real o emulado.
+- [ ] Cada casilla que no se cumple se vincula a un hallazgo o genera uno nuevo.
+
+**Estado al 29/10/2026**
+Pendiente. El checklist tiene 51 casillas y ninguna está marcada a propósito.
+
+**Evidencia / archivos**
+`docs/informe-accesibilidad.md` (sección 5).
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","accesibilidad","Sprint 4","leolopez373"
+"ACC-05 Corregir los hallazgos y bloquear regresiones de accesibilidad","**Descripción**
+Corregir los hallazgos del informe y hacer que los specs de axe pasen con 0 violaciones, para que cualquier regresión rompa el pipeline.
+
+**Criterios de aceptación**
+- [ ] Los 12 Issues de accesibilidad están cerrados con su PR.
+- [ ] Los 16 tests de axe pasan.
+- [ ] Los puntajes de accesibilidad de Lighthouse suben respecto de la medición del 29/10/2026 (entre 93 y 96).
+- [ ] Los specs de axe se agregan al pipeline.
+
+**Estado al 29/10/2026**
+Pendiente. Depende de los Issues de accesibilidad (H-01 a H-12).
+
+**Evidencia / archivos**
+`docs/informe-accesibilidad.md`; `tests/e2e/specs/a11y/`.
+
+**Definición de Done**
+El Issue pasa a Done solo con el PR mergeado a la rama principal, revisado por otro integrante y con la ejecución en verde (ver README, «Definición de Done en el Kanban»). Usar la plantilla de PR.
+
+_Texto del requisito propuesto a partir del trabajo de automatización del Sprint 4; ajustar al enunciado de la cátedra si difiere._","accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][API] Ids inexistentes devuelven 500 (o 400) en vez de 404","**Caso que lo detectó**
+TC-API-03 y TC-API-07 (Newman, FAIL); TC-PA-08 y TC-PA-09 (planilla); 12 tests de JUnit `*404_cuando*` en los 4 controllers (AdminControllerTest, ClubControllerTest, DeportistaControllerTest, SolicitudRegistroControllerTest). Criterio de aceptación CA-10.3.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el contrato REST es incorrecto pero no se pierden datos; el cliente puede distinguir el caso por el mensaje
+
+**Pasos para reproducir**
+1. Backend arriba y sesión de admin (`AdminRoot` / `locos1234`).
+2. `curl -i -u AdminRoot:locos1234 -X PUT http://localhost:8080/api/clubes/999999 -H ""Content-Type: application/json"" -d '{""nombreInstitucion"":""x"",""direccion"":""y""}'`
+3. `curl -i -u AdminRoot:locos1234 -X DELETE http://localhost:8080/api/clubes/999999`
+4. Repetir con `/api/deportistas/999999`, `GET /api/solicitudes/999999` y `POST /api/admin/club/999999`.
+
+**Resultado esperado**
+HTTP 404 (CA-10.3: operaciones sobre ids inexistentes devuelven 404).
+
+**Resultado obtenido**
+HTTP 500 con `RuntimeException: Club no encontrado` en `/api/clubes`, `/api/deportistas` y `/api/solicitudes`; HTTP 400 (`IllegalArgumentException`) en las rutas de `/api/admin/*`.
+
+**Evidencia**
+`tests/postman/POSIBLES-BUGS.md` (#1 y #2); `docs/tests-backend.md` (BUG-01); `docs/matriz-trazabilidad.csv`. Los 500 incluyen el stack trace en el body.
+
+**Arreglo sugerido**
+Crear una excepción de dominio (por ejemplo `RecursoNoEncontradoException`) o usar `ResponseStatusException(NOT_FOUND)` en los services, y mapearla a 404 en `GlobalExceptionHandler`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-01._","bug","Sprint 4","joaquinBrassinne"
+"[Bug][Validación] Se acepta edad 150 (falta límite máximo en DeportistaRequestDTO)","**Caso que lo detectó**
+TC-PA-12 (planilla, FAIL); JUnit `DeportistaRequestDTOValidationTest.debeFallar_cuandoEdadSuperaLimiteMaximo` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — permite datos biológicamente imposibles en perfiles públicos
+
+**Pasos para reproducir**
+1. Crear una solicitud de deportista (`POST /api/solicitudes`).
+2. `POST /api/admin/deportista/{idSolicitud}` con admin y `""edad"": 150`.
+
+**Resultado esperado**
+HTTP 400 mencionando `edad` (rango válido asumido: 1–120, supuesto 4 del plan).
+
+**Resultado obtenido**
+El DTO solo tiene `@Min(1)`; la edad 150 pasa la validación y se crea el perfil.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-02A); test de JUnit en rojo.
+
+**Arreglo sugerido**
+Agregar `@Max(120)` a `edad` en `DeportistaRequestDTO` (confirmar el límite con el cliente).
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02A._","bug","Sprint 4","leolopez373"
+"[Bug][Validación] Se acepta teléfono con letras (clubes y deportistas)","**Caso que lo detectó**
+TC-PA-15 (planilla, FAIL); JUnit `ClubRequestDTOValidationTest.debeFallar_cuandoTelefonoContieneLetras` y `DeportistaRequestDTOValidationTest.debeFallar_cuandoTelefonoContieneLetras` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — datos de contacto inválidos quedan publicados
+
+**Pasos para reproducir**
+1. Crear una solicitud de club.
+2. `POST /api/admin/club/{idSolicitud}` con `""telefono"": ""abc-xyz""`.
+
+**Resultado esperado**
+HTTP 400 mencionando `telefono` (supuesto 4 del plan: solo dígitos).
+
+**Resultado obtenido**
+Se acepta cualquier cadena: los DTOs no tienen `@Pattern`.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-02B); tests de JUnit en rojo.
+
+**Arreglo sugerido**
+Agregar `@Pattern` (solo dígitos o formato E.164, a definir con el cliente) en `ClubRequestDTO` y `DeportistaRequestDTO`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02B._","bug","Sprint 4","leolopez373"
+"[Bug][Validación] Se acepta email inválido (por ejemplo ""test@"")","**Caso que lo detectó**
+TC-PA-16 (Newman, FAIL: responde 201); JUnit `ClubRequestDTOValidationTest.debeFallar_cuandoEmailEsInvalido` y `DeportistaRequestDTOValidationTest.debeFallar_cuandoEmailEsInvalido` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el club se crea con un email sin formato válido
+
+**Pasos para reproducir**
+1. `curl -s -u AdminRoot:locos1234 -X POST http://localhost:8080/api/solicitudes -H ""Content-Type: application/json"" -d '{""tipo"":""CLUB"",""datosAdjuntos"":""{}""}'` y anotar el `id`.
+2. `curl -i -u AdminRoot:locos1234 -X POST http://localhost:8080/api/admin/club/{id} -H ""Content-Type: application/json"" -d '{""nombreInstitucion"":""Club X"",""direccion"":""Av 1"",""email"":""test@""}'`
+
+**Resultado esperado**
+HTTP 400 mencionando `email`.
+
+**Resultado obtenido**
+HTTP 201: el club se crea con `email = ""test@""` (los DTOs no tienen `@Email`).
+
+**Evidencia**
+`tests/postman/POSIBLES-BUGS.md` (#3); `docs/tests-backend.md` (BUG-02C).
+
+**Arreglo sugerido**
+Agregar `@Email` a `email` en `ClubRequestDTO` y `DeportistaRequestDTO`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02C._","bug","Sprint 4","leolopez373"
+"[Bug][Validación] Nombre de 256 caracteres pasa la validación web y falla en la base de datos","**Caso que lo detectó**
+TC-PA-14 (planilla, FAIL); JUnit `ClubRequestDTOValidationTest.debeFallar_cuandoNombreInstitucionSupera255Caracteres` y `DeportistaRequestDTOValidationTest.debeFallar_cuandoNombreSupera255Caracteres` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el usuario recibe un error de servidor en lugar de un 400 que indique el campo
+
+**Pasos para reproducir**
+1. Crear una solicitud de club.
+2. `POST /api/admin/club/{idSolicitud}` con `nombreInstitucion` de 256 caracteres.
+
+**Resultado esperado**
+HTTP 400 mencionando `nombreInstitucion` (nombre hasta 255 caracteres, supuesto 4 del plan).
+
+**Resultado obtenido**
+El DTO no limita el largo, así que la validación web no lo rechaza (el test de DTO falla). El rechazo ocurre recién en PostgreSQL por `varchar(255)` (confirmado por el test de persistencia); según `docs/tests-backend.md` eso termina en un error de servidor y no en un 400 que indique el campo.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-02D); `PersistenceIntegrationTest.debeFallarAlSuperarVarchar255EnBaseDeDatos_cuandoNombreSupera255Caracteres` (PASS: la BD rechaza); tests de DTO en rojo.
+
+**Arreglo sugerido**
+Agregar `@Size(max = 255)` a los campos de texto de los DTOs.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-02D._","bug","Sprint 4","leolopez373"
+"[Bug][Admin] Al aprobar por /api/admin/* no se completa perfilCreadoId en la solicitud","**Caso que lo detectó**
+TC-DB-01 (planilla, NOT RUN); JUnit `AdminServiceTest.AprobarClubTests.debeAsignarPerfilCreadoIdASolicitud_cuandoSeApruebaClub` y `AdminServiceTest.AprobarDeportistaTests.debeAsignarPerfilCreadoIdASolicitud_cuandoSeApruebaDeportista` (FAIL).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — la solicitud aprobada queda sin referencia al perfil creado; se pierde la trazabilidad
+
+**Pasos para reproducir**
+1. Crear una solicitud de deportista.
+2. `POST /api/admin/deportista/{idSolicitud}` (201).
+3. `GET /api/solicitudes/{idSolicitud}` (o `SELECT estado, perfil_creado_id FROM solicitudes_registro WHERE id = {idSolicitud};`).
+
+**Resultado esperado**
+`estado = APROBADO` y `perfilCreadoId` igual al id del perfil creado.
+
+**Resultado obtenido**
+`AdminService.aprobarSolicitudDepo` y `aprobarSolicitudClub` nunca invocan `solicitud.setPerfilCreadoId(...)`. (La otra ruta, `PATCH /api/solicitudes/{id}/aprobar`, sí lo completa.)
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-03A); tests de JUnit en rojo.
+
+**Arreglo sugerido**
+Completar `perfilCreadoId` con el id del perfil creado, o unificar las dos rutas de aprobación en un único servicio.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-03A._","bug","Sprint 4","EDAN13512"
+"[Bug][Admin] AdminService no es transaccional: la solicitud queda APROBADO sin perfil y la API responde 500","**Caso que lo detectó**
+TC-DB-05 (planilla, FAIL); JUnit `AdminServiceTest.AprobarDeportistaTests.noDebeAprobarSolicitud_cuandoFallaCreacionDeportistaPorClubInexistente` (FAIL) y `AdminControllerTest.AprobarDeportistaEndpointTests.debeRetornar400_cuandoDeportistaTieneClubIdInexistente` (ERROR: 500 en lugar de 400).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Crítica — inconsistencia de datos sin solución alternativa: la solicitud queda cerrada y el perfil nunca se crea
+
+**Pasos para reproducir**
+1. Crear una solicitud de deportista.
+2. `POST /api/admin/deportista/{idSolicitud}` con `""clubId"": 999999`.
+3. Consultar la solicitud: `GET /api/solicitudes/{idSolicitud}`.
+
+**Resultado esperado**
+HTTP 400 y la solicitud sigue PENDIENTE (sin perfil creado).
+
+**Resultado obtenido**
+Respuesta 500 y la solicitud ya quedó APROBADO sin perfil: el servicio guarda el estado antes de crear el perfil y no tiene `@Transactional`.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-03B); tests de JUnit en rojo.
+
+**Arreglo sugerido**
+Marcar `AdminService` con `@Transactional`, crear el perfil antes de marcar APROBADO, y devolver 400 cuando el `clubId` no existe.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-03B._","bug","Sprint 4","EDAN13512"
+"[Bug][Solicitudes] Rechazar una solicitud pisa fechaEnvio y deja fechaRevision en null","**Caso que lo detectó**
+JUnit `SolicitudRegistroServiceTest.RechazarTests.debeRechazarSolicitudYAsignarFechaRevision_cuandoSeRechazaConMotivo` (FAIL); relacionado con TC-PA-04 (planilla, NOT RUN).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — se pierde la fecha original de envío
+
+**Pasos para reproducir**
+1. Crear una solicitud y anotar `fechaEnvio`.
+2. `PATCH /api/solicitudes/{id}/rechazar?motivo=prueba`.
+3. `GET /api/solicitudes/{id}` y comparar `fechaEnvio` y `fechaRevision`.
+
+**Resultado esperado**
+`fechaEnvio` sin cambios y `fechaRevision` con la fecha del rechazo.
+
+**Resultado obtenido**
+`SolicitudRegistroService.rechazar` ejecuta `setFechaEnvio(...)` en lugar de `setFechaRevision(...)`: se sobrescribe la fecha de envío y la de revisión queda nula.
+
+**Evidencia**
+`docs/tests-backend.md` (BUG-04); test de JUnit en rojo.
+
+**Arreglo sugerido**
+Reemplazar `setFechaEnvio` por `setFechaRevision` en `rechazar`.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: BUG-04._","bug","Sprint 4","EDAN13512"
+"[Bug][Seguridad] Los errores 400 de POST /api/solicitudes llegan como 401 a un visitante sin credenciales","**Caso que lo detectó**
+TC-SR-07 (Newman, FAIL); mismo efecto en TC-SR-03, 04, 08, 09 y 10 ejecutados sin autenticación.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Crítica — el formulario público de registro nunca muestra el error de validación: el visitante no sabe qué corregir
+
+**Pasos para reproducir**
+1. `curl -i -X POST http://localhost:8080/api/solicitudes -H ""Content-Type: application/json"" -d '{""tipo"":""EQUIPO"",""datosAdjuntos"":""{}""}'` (sin credenciales).
+2. Repetir con `-u AdminRoot:locos1234`.
+3. Repetir sin credenciales con `{""tipo"":null,""datosAdjuntos"":""{}""}`, con `datosAdjuntos` vacío y con JSON malformado.
+
+**Resultado esperado**
+HTTP 400 con el error de validación (CA-5.2), con o sin credenciales: el endpoint es público.
+
+**Resultado obtenido**
+Sin credenciales: HTTP 401. Con credenciales de admin: HTTP 400. Los tests de JUnit (MockMvc) pasan porque no reproducen este comportamiento.
+
+**Evidencia**
+`tests/postman/POSIBLES-BUGS.md` (#4); `tests/postman/CrazySports.postman_collection.json` → `TC-SR-07`.
+
+**Arreglo sugerido**
+Hipótesis a verificar: Spring Boot reenvía el error a `/error` y `SecurityConfig` no lo permite (`anyRequest().authenticated()`). Probar `permitAll()` para `/error` y verificarlo con el caso TC-SR-07 de Newman, que es el que lo detecta.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: API-401._","bug","Sprint 4","leolopez373"
+"[Bug][UI] Los perfiles aprobados no aparecen en /clubes y /deportistas hasta recargar la página","**Caso que lo detectó**
+TC-IT-01 y TC-IT-02 (planilla, FAIL; Playwright, FAIL: `tests/e2e/specs/alta-por-api.spec.ts`).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — solo si se confirma que la actualización sin recargar es un requisito (la planilla pide confirmarlo con el equipo)
+
+**Pasos para reproducir**
+1. Abrir `http://localhost:5173/clubes` (o `/deportistas`) y dejar la pestaña abierta.
+2. Aprobar una solicitud (`POST /api/admin/club/{id}`).
+3. Esperar hasta 30 s sin recargar.
+
+**Resultado esperado**
+La card del club (o deportista) aparece sin recargar, esperando hasta 30 s (TC-IT-01 y TC-IT-02).
+
+**Resultado obtenido**
+A los 30 s no hay ninguna card nueva; aparece recién al recargar. `useClubes` y `useDeportistas` descargan el listado una sola vez al montar la página (sin polling ni refetch).
+
+**Evidencia**
+`tests/e2e/BUGS-E2E.md` (E2E-01 y E2E-02); screenshot, video y trace en `tests/e2e/evidencia-bugs/E2E-01-club-no-aparece-sin-recargar/` y `E2E-02-deportista-no-aparece-sin-recargar/`.
+
+**Arreglo sugerido**
+Agregar polling/refetch (o refetch al volver el foco a la pestaña) en los hooks. Si el equipo decide que no es un requisito, cerrar el Issue y ajustar el esperado de TC-IT-01/02.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: E2E-01/E2E-02._","bug","Sprint 4","joaquinBrassinne"
+"[Bug][UI] El mensaje de ""sin resultados"" no lleva el punto final esperado","**Caso que lo detectó**
+TC-VP-04 (Playwright, FAIL: `tests/e2e/specs/clubes.spec.ts`, «El mensaje de sin resultados es exactamente…»).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — defecto de texto que no afecta la función
+
+**Pasos para reproducir**
+1. Abrir `http://localhost:5173/clubes`.
+2. Buscar `xxxxxxxxxxx`.
+
+**Resultado esperado**
+«No se encontraron clubes.» (con punto final, TC-VP-04 y CA-3.3).
+
+**Resultado obtenido**
+«No se encontraron clubes» (sin punto). `/deportistas` tiene el mismo patrón («No se encontraron deportistas»).
+
+**Evidencia**
+`tests/e2e/BUGS-E2E.md` (E2E-03); screenshot, video y trace en `tests/e2e/evidencia-bugs/E2E-03-mensaje-sin-punto-final/`. Nota: la planilla registró como PASS el texto sin punto, así que esperado y resultado ya eran inconsistentes.
+
+**Arreglo sugerido**
+Agregar el punto en `ClubesPage.tsx` y `DeportistasPage.tsx`, o corregir el esperado de la planilla y de CA-3.3 si el texto sin punto es el correcto.
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: E2E-03._","bug","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] Contraste insuficiente del texto secundario en todas las pantallas","**Caso que lo detectó**
+axe en todas las pantallas (`axe-*.json`); Lighthouse `color-contrast`.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — texto con 3,5 a 4,15:1; el mínimo es 4,5:1
+
+**Pasos para reproducir**
+1. `npm run test:a11y` y abrir `tests/a11y/reports/axe-home.json` → `violations`.
+2. O abrir `/clubes` en Chrome DevTools, inspeccionar «Institución deportiva registrada…» y mirar la relación de contraste del selector de color.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.4.3 Contraste (mínimo), AA.
+
+**Resultado obtenido**
+axe `color-contrast` (serious) en las 16 pantallas/estados auditados. La clase `text-neutral-500` (`#737373`) mide entre 3,47:1 y 4,15:1 sobre los fondos oscuros (por ejemplo `#737373` sobre `#161616` = 3,81:1 en 12 px). Ejemplos: «Sugerir Deportista (próximamente)», «Institución deportiva registrada en Río Tercero.», textos de ayuda del formulario.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-01); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Reemplazar `text-neutral-500` por `text-neutral-400` (`#a3a3a3`, ≈ 6,5:1 o más según el cálculo; confirmar con axe) en el texto informativo, y revisar también los placeholders (`placeholder:text-neutral-500`).
+
+**Pantalla:** Todas (Home, /clubes, /deportistas, /buscar, /mapa, /solicitud, /login, /admin)
+**Criterio WCAG:** 1.4.3 Contraste (mínimo), AA
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-01._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] /login: el texto que se escribe es casi invisible y el botón y el error tienen poco contraste","**Caso que lo detectó**
+Spec `A11Y-LOGIN` (axe).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el administrador no ve lo que escribe
+
+**Pasos para reproducir**
+1. Ir a `/login`.
+2. Escribir en «Usuario»: el texto se ve casi blanco sobre blanco.
+3. Enviar credenciales inválidas: el mensaje rojo tiene poco contraste.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.4.3 Contraste (mínimo), AA.
+
+**Resultado obtenido**
+axe (`axe-login-error.json`): el texto del campo Usuario es `#e5e5e5` sobre `#ffffff` = 1,25:1 (el `<input>` hereda el gris claro del `body`); botón «Ingresar» blanco sobre `#3b82f6` = 3,67:1; mensaje de error `#ef4444` sobre blanco = 3,76:1.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-02); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Definir `color` oscuro en los `<input>` (por ejemplo `#111827`), botón con fondo `#2563eb` (≈ 5,2:1 con blanco) y error con `#b91c1c` o más oscuro.
+
+**Pantalla:** /login
+**Criterio WCAG:** 1.4.3 Contraste (mínimo), AA
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-02._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] /login: los campos no tienen etiqueta (solo placeholder)","**Caso que lo detectó**
+Diagnóstico de apoyo (`tests/a11y/diagnostico-manual.mjs`).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — el placeholder desaparece al escribir y no es una etiqueta
+
+**Pasos para reproducir**
+1. Ir a `/login`.
+2. Escribir algo en «Usuario»: ya no queda ninguna indicación visible de qué campo es.
+3. Con un lector de pantalla, comprobar qué anuncia al enfocar el campo.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 Información y relaciones (A).
+
+**Resultado obtenido**
+Diagnóstico (`diagnostico-manual.json` → `login`): los dos `<input>` no tienen `<label>`, `aria-label`, `aria-labelledby` ni `title`. axe no lo marca porque acepta el placeholder como nombre accesible.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-03); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Agregar `<label htmlFor>` visible (o `aria-label`) y `autocomplete=""username""` / `""current-password""`.
+
+**Pantalla:** /login
+**Criterio WCAG:** 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 Información y relaciones (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-03._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] /login: el foco del teclado no se ve","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — quien navega con teclado no sabe en qué campo está
+
+**Pasos para reproducir**
+1. Ir a `/login`.
+2. Pulsar Tab hasta «Usuario» y «Contraseña»: no cambia nada visible.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 2.4.7 Foco visible, AA.
+
+**Resultado obtenido**
+Diagnóstico (`loginFoco`): al enfocar «Usuario», el `<input>` tiene `outline-style: none` y `box-shadow: none`, y el contenedor conserva el mismo borde. Los estilos son inline (`outline: 'none'`).
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-04); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Quitar `outline: 'none'` y definir un indicador `:focus-visible` (borde o sombra de 2 px con contraste ≥ 3:1) en el contenedor del campo.
+
+**Pantalla:** /login
+**Criterio WCAG:** 2.4.7 Foco visible, AA
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-04._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] Los mensajes de error de /login y /solicitud no se asocian al campo ni se anuncian","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — con lector de pantalla no se sabe que hubo un error ni en qué campo
+
+**Pasos para reproducir**
+1. `/solicitud` → «ENVIAR SOLICITUD DE REGISTRO» sin completar nada.
+2. Con un lector de pantalla no se anuncia qué falló ni en qué campo.
+3. Igual en `/login` con credenciales inválidas.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.3.1 Identificación de errores (A) y 4.1.3 Mensajes de estado (AA).
+
+**Resultado obtenido**
+Diagnóstico: en `/login` el error es un `<p>` sin `role` ni `aria-live`. En `/solicitud`, tras enviar vacío: 2 campos con `aria-invalid=""true""`, 0 con `aria-describedby`, 0 elementos `role=""alert""`, 0 regiones `aria-live`; el foco queda en el botón.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-05); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+`role=""alert""` en el mensaje de `/login`; en `FormField`, `aria-describedby` apuntando al texto del error y mover el foco al primer campo inválido (o a un resumen con `role=""alert""`).
+
+**Pantalla:** /login y /solicitud
+**Criterio WCAG:** 3.3.1 Identificación de errores (A) y 4.1.3 Mensajes de estado (AA)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-05._","bug,accesibilidad","Sprint 4","EDAN13512"
+"[Bug][Accesibilidad] Los modales de club y deportista no tienen semántica de diálogo y el botón cerrar no tiene nombre","**Caso que lo detectó**
+Specs `A11Y-CLUBES` y `A11Y-DEPORTISTAS` con el modal abierto (axe).
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — se puede cerrar con Escape, pero un lector de pantalla no anuncia el diálogo
+
+**Pasos para reproducir**
+1. `/clubes` → Tab hasta «Ver más» → Enter.
+2. Se abre el modal pero un lector de pantalla no lo anuncia y Tab sigue recorriendo la página de atrás.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 4.1.2 Nombre, función, valor (A) y 2.4.3 Orden del foco (A).
+
+**Resultado obtenido**
+axe `button-name` (critical) en `axe-clubes-modal.json` y `axe-deportistas-modal.json`: el botón cerrar es solo un SVG. Diagnóstico: sin `role=""dialog""`, `aria-modal` ni `aria-labelledby`; al abrir, el foco no entra al modal (el elemento activo sigue siendo «Ver más»).
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-06); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+`role=""dialog"" aria-modal=""true"" aria-labelledby=<id del título>`, `aria-label=""Cerrar""` en el botón, mover el foco al diálogo al abrir y atraparlo mientras esté abierto (o usar `<dialog>`).
+
+**Pantalla:** /clubes («Ver más») y /deportistas («Ver perfil»)
+**Criterio WCAG:** 4.1.2 Nombre, función, valor (A) y 2.4.3 Orden del foco (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-06._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] El toggle «Deporte Inclusivo / Adaptado» no se puede usar con teclado y no expone rol ni estado","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — una función de filtrado queda inaccesible para quien no usa mouse
+
+**Pasos para reproducir**
+1. Abrir `/clubes`.
+2. Recorrer la página con Tab: el toggle nunca se enfoca; con el teclado no hay forma de activar el filtro.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 2.1.1 Teclado (A) y 4.1.2 Nombre, función, valor (A).
+
+**Resultado obtenido**
+Diagnóstico (`toggle`): es un `<div onClick>` dentro de un `<label for=""toggle-adaptado"">` que apunta a un id inexistente; `role`, `tabindex` y `aria-checked` son null y no recibió foco tras 40 pulsaciones de Tab. Medido en `/clubes`; `/deportistas` tiene el mismo markup.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-07); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Usar `<input type=""checkbox"" role=""switch"" id=""toggle-adaptado"">` (o `<button role=""switch"" aria-checked>`) con su `<label>` y estilos `:focus-visible`.
+
+**Pantalla:** /clubes y /deportistas
+**Criterio WCAG:** 2.1.1 Teclado (A) y 4.1.2 Nombre, función, valor (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-07._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] <html lang=""en""> con contenido en español","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Mayor — los lectores de pantalla leerían el español con pronunciación inglesa
+
+**Pasos para reproducir**
+1. Abrir cualquier pantalla.
+2. Inspeccionar `<html>`: `lang=""en""`.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.1.1 Idioma de la página, A.
+
+**Resultado obtenido**
+`Frontend/index.html` línea 2: `<html lang=""en"">`; el diagnóstico confirma `htmlLang = ""en""` en las 8 pantallas. axe no lo marca porque `en` es un código válido.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-08); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Cambiar a `<html lang=""es"">` (o `es-AR`).
+
+**Pantalla:** Todas (`Frontend/index.html`)
+**Criterio WCAG:** 3.1.1 Idioma de la página, A
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-08._","bug,accesibilidad","Sprint 4","joaquinBrassinne"
+"[Bug][Accesibilidad] Todas las rutas tienen el mismo título de página","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — el título no distingue las pantallas
+
+**Pasos para reproducir**
+1. Navegar entre pantallas.
+2. Mirar la pestaña del navegador o el historial.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 2.4.2 Página titulada, A.
+
+**Resultado obtenido**
+Diagnóstico: `document.title = ""Deporte Río Tercero""` en las 8 rutas.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-09); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Actualizar `document.title` por ruta («Clubes · Deporte Río Tercero», «Solicitud de registro · …»).
+
+**Pantalla:** Todas
+**Criterio WCAG:** 2.4.2 Página titulada, A
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-09._","bug,accesibilidad","Sprint 4","joaquinBrassinne"
+"[Bug][Accesibilidad] Estructura de encabezados incompleta o con saltos","**Caso que lo detectó**
+Lighthouse y diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — afecta la navegación por encabezados con lector de pantalla
+
+**Pasos para reproducir**
+1. En cada pantalla ejecutar `document.querySelectorAll(""h1,h2,h3"")` o usar la extensión HeadingsMap.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.3.1 Información y relaciones (A) y 2.4.6 Encabezados y etiquetas (AA).
+
+**Resultado obtenido**
+Lighthouse `heading-order` falla en `/clubes` y `/deportistas` (escritorio y móvil). Diagnóstico: `/mapa` y `/login` tienen 0 `<h1>`.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-10); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Un `<h1>` por pantalla; `<h3>` solo bajo un `<h2>` (en los listados, un `<h2 class=""sr-only"">` resuelve el salto sin cambiar el diseño).
+
+**Pantalla:** /mapa y /login (sin h1); /clubes y /deportistas (saltan de h1 a h3)
+**Criterio WCAG:** 1.3.1 Información y relaciones (A) y 2.4.6 Encabezados y etiquetas (AA)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-10._","bug,accesibilidad","Sprint 4","cynthiamolina081-png"
+"[Bug][Accesibilidad] Landmarks duplicados en /admin y /buscar","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — axe lo clasifica como buena práctica; no entra en las etiquetas WCAG usadas
+
+**Pasos para reproducir**
+1. Con un lector de pantalla, listar las regiones; o `document.querySelectorAll(""main"").length` en `/admin`.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 1.3.1 Información y relaciones (técnicas ARIA11/ARIA13).
+
+**Resultado obtenido**
+Diagnóstico (`paginas[""/admin""].landmarks` y `paginas[""/buscar""].landmarks`). En `/admin` el layout global (Navbar y Footer) convive con el layout propio del panel.
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-11); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Un solo `<main>` por página y `aria-label` para distinguir los dos `<nav>` del panel.
+
+**Pantalla:** /admin (2 header, 2 nav, 2 main) y /buscar (2 main)
+**Criterio WCAG:** 1.3.1 Información y relaciones (técnicas ARIA11/ARIA13)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-11._","bug,accesibilidad","Sprint 4","leolopez373"
+"[Bug][Accesibilidad] El campo «Otras disciplinas» del formulario de club no tiene etiqueta","**Caso que lo detectó**
+Diagnóstico de apoyo.
+
+**Severidad (escala del plan de pruebas v1.1)**
+Menor — un campo sin nombre accesible entre 11
+
+**Pasos para reproducir**
+1. `/solicitud` → pestaña «Soy un club».
+2. Inspeccionar ese input.
+
+**Resultado esperado**
+Cumplir WCAG 2.2 AA — 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 (A).
+
+**Resultado obtenido**
+Diagnóstico (`solicitudErrores`): 1 de 11 campos sin `label` ni `aria-label`: el `<input>` con placeholder «Otras disciplinas (separadas por coma, ej: Padel, Ciclismo)».
+
+**Evidencia**
+`docs/informe-accesibilidad.md` (H-12); resultados en `tests/a11y/reports/`.
+
+**Arreglo sugerido**
+Agregar `aria-label=""Otras disciplinas""` (o un `<label>` visible).
+
+**Pantalla:** /solicitud (formulario de club)
+**Criterio WCAG:** 3.3.2 Etiquetas o instrucciones (A) y 1.3.1 (A)
+
+_Detectado por la automatización de pruebas (ejecución del 29/10/2026). ID interno: H-12._","bug,accesibilidad","Sprint 4","EDAN13512"

@@ -1,0 +1,3100 @@
+{
+  "info": {
+    "name": "CrazySports API - Locos del Deporte",
+    "description": "Casos de la planilla Test Case v1.10 (hojas «API Clubes y Deportistas» y «Autenticación», más validaciones 400 de TC-SR/TC-PA). Los resultados esperados salen de la planilla y de los criterios de aceptación, no del comportamiento actual del sistema. Ver tests/postman/README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{adminUser}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{adminPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "TC-AU-01 Acceso a endpoint protegido con credenciales válidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El body es una lista de solicitudes con estado\", function () {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.be.an(\"array\");",
+                  "    b.forEach(function (s) { pm.expect(s).to.have.property(\"estado\"); pm.expect(s).to.have.property(\"tipo\"); });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-02 Acceso con contraseña incorrecta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});",
+                  "pm.test(\"El body no contiene solicitudes\", function () { pm.expect(pm.response.text()).to.not.include(\"estado\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "passwordIncorrecta",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-03 Acceso con usuario inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});",
+                  "pm.test(\"El body no contiene solicitudes\", function () { pm.expect(pm.response.text()).to.not.include(\"estado\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "usuarioInventado",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "cualquiera",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-04 GET de solicitudes sin credenciales",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});",
+                  "pm.test(\"El body no contiene solicitudes\", function () { pm.expect(pm.response.text()).to.not.include(\"estado\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "TC-AU-05 GET /api/clubes es público (requiere DS-01)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Lista exactamente los 3 clubes de DS-01\", function () {",
+                  "    const nombres = pm.response.json().map(function (c) { return c.nombreInstitucion; }).sort();",
+                  "    pm.expect(nombres).to.eql([\"Club Atlético Río Tercero\", \"Club Atlético Sur\", \"Club Náutico Río Tercero\"].sort());",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "TC-AU-06 SETUP Crear solicitud de club \"Club Test AU06\"",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Solicitud creada: id numerico, tipo CLUB, estado PENDIENTE, fechaEnvio\", function () {",
+                  "    pm.expect(b.id).to.be.a(\"number\");",
+                  "    pm.expect(b.tipo).to.eql(\"CLUB\");",
+                  "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                  "    pm.expect(b.fechaEnvio).to.not.be.null;",
+                  "});",
+                  "pm.environment.set(\"idSolicitud\", b.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Test AU06\\\",\\\"direccion\\\":\\\"Av. Test 123\\\",\\\"telefono\\\":\\\"3571000000\\\",\\\"email\\\":\\\"test@test.com\\\",\\\"disciplinas\\\":\\\"Fútbol\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[]}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-AU-06 POST de aprobación sin credenciales",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/club/{{idSolicitud}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "club",
+                "{{idSolicitud}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Test AU06\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestau06@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-AU-06 Verificar que la solicitud sigue PENDIENTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"estado = PENDIENTE y perfilCreadoId nulo\", function () { const b = pm.response.json(); pm.expect(b.estado).to.eql(\"PENDIENTE\"); pm.expect(b.perfilCreadoId).to.be.null; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{idSolicitud}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes",
+                "{{idSolicitud}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-07 POST de rechazo sin credenciales",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/rechazar/{{idSolicitud}}/prueba",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "rechazar",
+                "{{idSolicitud}}",
+                "prueba"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "TC-AU-07 Verificar que la solicitud sigue PENDIENTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"estado = PENDIENTE\", function () { pm.expect(pm.response.json().estado).to.eql(\"PENDIENTE\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{idSolicitud}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes",
+                "{{idSolicitud}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-07 CLEANUP Rechazar solicitud pendiente de prueba",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"idSolicitud\")) { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200 o 400\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 400]); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type presente (text/plain en 200 porque devuelve un String; application/json en 400)\", function () {",
+                  "    const ct = pm.response.headers.get(\"Content-Type\") || \"\";",
+                  "    pm.expect(ct.includes(\"text/plain\") || ct.includes(\"application/json\")).to.be.true;",
+                  "});",
+                  "pm.environment.unset(\"idSolicitud\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/rechazar/{{idSolicitud}}/cleanup-automatizado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "rechazar",
+                "{{idSolicitud}}",
+                "cleanup-automatizado"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-08 Acceso con contraseña vacía",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});",
+                  "pm.test(\"El body no contiene solicitudes\", function () { pm.expect(pm.response.text()).to.not.include(\"estado\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-AU-09 Header Authorization malformado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                  "});",
+                  "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                  "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                  "});",
+                  "pm.test(\"Nunca 500\", function () { pm.expect(pm.response.code).to.be.below(500); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic !!!"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "TC-AU-10 GET /api/deportistas es público (requiere DS-01)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                  "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"Lista exactamente los 4 deportistas de DS-01\", function () {",
+                  "    const nombres = pm.response.json().map(function (d) { return d.nombre; }).sort();",
+                  "    pm.expect(nombres).to.eql([\"Lucía Pérez\", \"Mateo Gómez\", \"Sofía Díaz\", \"Tomás Ruiz\"].sort());",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ],
+      "description": "Hoja «Autenticación». TC-AU-11 (admin por defecto al iniciar) requiere reiniciar el backend y SQL: no es automatizable por API. TC-AU-05 y TC-AU-10 asumen la BD cargada con DS-01."
+    },
+    {
+      "name": "Clubes",
+      "item": [
+        {
+          "name": "Flujo A - Actualizar club",
+          "item": [
+            {
+              "name": "TC-API-01 SETUP Crear solicitud de club \"Club Test API01\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo CLUB, estado PENDIENTE, fechaEnvio\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"CLUB\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "    pm.expect(b.fechaEnvio).to.not.be.null;",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Test API01\\\",\\\"direccion\\\":\\\"Av. Test 123\\\",\\\"telefono\\\":\\\"3571000000\\\",\\\"email\\\":\\\"test@test.com\\\",\\\"disciplinas\\\":\\\"Fútbol\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[]}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-01 SETUP Aprobar solicitud y crear club \"Club Test API01\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Club creado con id y nombreInstitucion\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.nombreInstitucion).to.eql(\"Club Test API01\");",
+                      "});",
+                      "pm.environment.set(\"idClub\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/club/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "club",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test API01\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi01@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-01 Actualizar un club con datos válidos",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"direccion = Av. Modificada 999 y mismo id\", function () {",
+                      "    pm.expect(b.id).to.eql(Number(pm.environment.get(\"idClub\")));",
+                      "    pm.expect(b.direccion).to.eql(\"Av. Modificada 999\");",
+                      "    pm.expect(b.nombreInstitucion).to.eql(\"Club Test API01\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test API01\",\n  \"direccion\": \"Av. Modificada 999\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi01@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-01 Verificar cambio con GET /api/clubes/{id}",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"La dirección persistió\", function () { pm.expect(pm.response.json().direccion).to.eql(\"Av. Modificada 999\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-02 Actualizar un club sin credenciales",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                      "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                      "});",
+                      "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                      "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                      "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test API01\",\n  \"direccion\": \"Av. Hackeada 666\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi01@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-02 Verificar que la dirección no cambió",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"direccion sigue en Av. Modificada 999\", function () { pm.expect(pm.response.json().direccion).to.eql(\"Av. Modificada 999\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-04 Actualizar un club con nombre vacío",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El error menciona «nombreInstitucion»\", function () { pm.expect(pm.response.text()).to.include(\"nombreInstitucion\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi01@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-04 Verificar que el nombre no cambió",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"nombreInstitucion conservado\", function () { pm.expect(pm.response.json().nombreInstitucion).to.eql(\"Club Test API01\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-01 CLEANUP Eliminar club de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idClub\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});",
+                      "pm.environment.unset(\"idClub\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo B - Eliminar sin credenciales",
+          "item": [
+            {
+              "name": "TC-API-06 SETUP Crear solicitud de club \"Club Test API06\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo CLUB, estado PENDIENTE, fechaEnvio\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"CLUB\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "    pm.expect(b.fechaEnvio).to.not.be.null;",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Test API06\\\",\\\"direccion\\\":\\\"Av. Test 123\\\",\\\"telefono\\\":\\\"3571000000\\\",\\\"email\\\":\\\"test@test.com\\\",\\\"disciplinas\\\":\\\"Fútbol\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[]}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-06 SETUP Aprobar solicitud y crear club \"Club Test API06\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Club creado con id y nombreInstitucion\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.nombreInstitucion).to.eql(\"Club Test API06\");",
+                      "});",
+                      "pm.environment.set(\"idClub\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/club/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "club",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test API06\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi06@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-06 Eliminar un club sin credenciales",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                      "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                      "});",
+                      "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                      "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                      "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-06 Verificar que el club sigue existiendo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El club existe\", function () { pm.expect(pm.response.json().id).to.eql(Number(pm.environment.get(\"idClub\"))); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-06 CLEANUP Eliminar club de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idClub\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});",
+                      "pm.environment.unset(\"idClub\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo C - Eliminar con credenciales",
+          "item": [
+            {
+              "name": "TC-API-05 SETUP Crear solicitud de club \"Club Test API05\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo CLUB, estado PENDIENTE, fechaEnvio\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"CLUB\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "    pm.expect(b.fechaEnvio).to.not.be.null;",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Test API05\\\",\\\"direccion\\\":\\\"Av. Test 123\\\",\\\"telefono\\\":\\\"3571000000\\\",\\\"email\\\":\\\"test@test.com\\\",\\\"disciplinas\\\":\\\"Fútbol\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[]}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-05 SETUP Aprobar solicitud y crear club \"Club Test API05\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Club creado con id y nombreInstitucion\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.nombreInstitucion).to.eql(\"Club Test API05\");",
+                      "});",
+                      "pm.environment.set(\"idClub\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/club/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "club",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test API05\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi05@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-05 Eliminar un club existente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "TC-API-05 Verificar que el club ya no figura en el listado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El listado no contiene el club eliminado\", function () {",
+                      "    const ids = pm.response.json().map(function (c) { return c.id; });",
+                      "    pm.expect(ids).to.not.include(Number(pm.environment.get(\"idClub\")));",
+                      "});",
+                      "pm.environment.unset(\"idClub\");",
+                      "pm.test(\"El listado no contiene «Club Test API05»\", function () {",
+                      "    pm.expect(pm.response.json().map(function (c) { return c.nombreInstitucion; })).to.not.include(\"Club Test API05\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo D - Id inexistente",
+          "item": [
+            {
+              "name": "TC-API-03 Actualizar un club inexistente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/999999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "999999"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test API03\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestapi03@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-07 Eliminar un club inexistente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/999999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "999999"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Deportistas",
+      "item": [
+        {
+          "name": "Flujo A - Actualizar deportista",
+          "item": [
+            {
+              "name": "TC-API-08 SETUP Crear solicitud de deportista \"Deportista Test API08\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo DEPORTISTA, estado PENDIENTE\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"DEPORTISTA\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"DEPORTISTA\",\n  \"datosAdjuntos\": \"{\\\"nombre\\\":\\\"Deportista Test API08\\\",\\\"deporte\\\":\\\"Fútbol\\\",\\\"edad\\\":25,\\\"historia\\\":\\\"Historia de prueba\\\",\\\"logros\\\":\\\"Campeón local 2024\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[],\\\"clubId\\\":null}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-08 SETUP Aprobar solicitud y crear deportista \"Deportista Test API08\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Deportista creado con id, nombre y edad\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.nombre).to.eql(\"Deportista Test API08\");",
+                      "    pm.expect(b.edad).to.eql(25);",
+                      "});",
+                      "pm.environment.set(\"idDeportista\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/deportista/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "deportista",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test API08\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 25,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón local 2024\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-08 Actualizar un deportista con datos válidos",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"logros = Campeón provincial 2026 y mismo id\", function () {",
+                      "    pm.expect(b.id).to.eql(Number(pm.environment.get(\"idDeportista\")));",
+                      "    pm.expect(b.logros).to.eql(\"Campeón provincial 2026\");",
+                      "    pm.expect(b.nombre).to.eql(\"Deportista Test API08\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test API08\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 25,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón provincial 2026\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-08 Verificar cambio con GET /api/deportistas/{id}",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"Los logros persistieron\", function () { pm.expect(pm.response.json().logros).to.eql(\"Campeón provincial 2026\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-10 Actualizar un deportista sin credenciales",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                      "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                      "});",
+                      "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                      "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                      "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test API08\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 25,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Logro falso\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-10 Verificar que los logros no cambiaron",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"logros sin cambios\", function () { pm.expect(pm.response.json().logros).to.eql(\"Campeón provincial 2026\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-11 Actualizar un deportista con edad 0",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El error menciona «edad»\", function () { pm.expect(pm.response.text()).to.include(\"edad\"); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test API08\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 0,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón local 2024\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-11 Verificar que la edad no cambió",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"edad = 25\", function () { pm.expect(pm.response.json().edad).to.eql(25); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-08 CLEANUP Eliminar deportista de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idDeportista\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});",
+                      "pm.environment.unset(\"idDeportista\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo B - Eliminar sin credenciales",
+          "item": [
+            {
+              "name": "TC-API-12 SETUP Crear solicitud de deportista \"Deportista Test API12\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo DEPORTISTA, estado PENDIENTE\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"DEPORTISTA\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"DEPORTISTA\",\n  \"datosAdjuntos\": \"{\\\"nombre\\\":\\\"Deportista Test API12\\\",\\\"deporte\\\":\\\"Fútbol\\\",\\\"edad\\\":25,\\\"historia\\\":\\\"Historia de prueba\\\",\\\"logros\\\":\\\"Campeón local 2024\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[],\\\"clubId\\\":null}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-12 SETUP Aprobar solicitud y crear deportista \"Deportista Test API12\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Deportista creado con id, nombre y edad\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.nombre).to.eql(\"Deportista Test API12\");",
+                      "    pm.expect(b.edad).to.eql(25);",
+                      "});",
+                      "pm.environment.set(\"idDeportista\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/deportista/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "deportista",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test API12\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 25,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón local 2024\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-12 Eliminar un deportista sin credenciales",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"Cabecera WWW-Authenticate: Basic (sin credenciales validas)\", function () {",
+                      "    pm.expect(pm.response.headers.get(\"WWW-Authenticate\") || \"\").to.include(\"Basic\");",
+                      "});",
+                      "pm.test(\"El body no expone datos (sin lista de solicitudes/entidades)\", function () {",
+                      "    pm.expect(pm.response.text()).to.not.include(\"nombreInstitucion\");",
+                      "    pm.expect(pm.response.text()).to.not.include(\"datosAdjuntos\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-12 Verificar que el deportista sigue existiendo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El deportista existe\", function () { pm.expect(pm.response.json().id).to.eql(Number(pm.environment.get(\"idDeportista\"))); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            },
+            {
+              "name": "TC-API-12 CLEANUP Eliminar deportista de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idDeportista\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});",
+                      "pm.environment.unset(\"idDeportista\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flujo C - Eliminar con credenciales",
+          "item": [
+            {
+              "name": "TC-API-09 SETUP Crear solicitud de deportista \"Deportista Test API09\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo DEPORTISTA, estado PENDIENTE\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"DEPORTISTA\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"DEPORTISTA\",\n  \"datosAdjuntos\": \"{\\\"nombre\\\":\\\"Deportista Test API09\\\",\\\"deporte\\\":\\\"Fútbol\\\",\\\"edad\\\":25,\\\"historia\\\":\\\"Historia de prueba\\\",\\\"logros\\\":\\\"Campeón local 2024\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[],\\\"clubId\\\":null}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-09 SETUP Aprobar solicitud y crear deportista \"Deportista Test API09\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Deportista creado con id, nombre y edad\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.nombre).to.eql(\"Deportista Test API09\");",
+                      "    pm.expect(b.edad).to.eql(25);",
+                      "});",
+                      "pm.environment.set(\"idDeportista\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/deportista/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "deportista",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test API09\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 25,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón local 2024\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-API-09 Eliminar un deportista existente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "TC-API-09 Verificar que el deportista ya no figura en el listado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El listado no contiene el deportista eliminado\", function () {",
+                      "    const ids = pm.response.json().map(function (d) { return d.id; });",
+                      "    pm.expect(ids).to.not.include(Number(pm.environment.get(\"idDeportista\")));",
+                      "});",
+                      "pm.environment.unset(\"idDeportista\");",
+                      "pm.test(\"El listado no contiene «Deportista Test API09»\", function () {",
+                      "    pm.expect(pm.response.json().map(function (d) { return d.nombre; })).to.not.include(\"Deportista Test API09\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Validaciones 400",
+      "item": [
+        {
+          "name": "Solicitud con tipo fuera del enum",
+          "item": [
+            {
+              "name": "TC-SR-07 Rechazar solicitud con tipo fuera del enum (EQUIPO)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"EQUIPO\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Test SR07\\\"}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aprobar club con datos inválidos",
+          "item": [
+            {
+              "name": "TC-PA-13 SETUP Crear solicitud de club \"Club Test PA13\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo CLUB, estado PENDIENTE, fechaEnvio\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"CLUB\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "    pm.expect(b.fechaEnvio).to.not.be.null;",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Test PA13\\\",\\\"direccion\\\":\\\"Av. Test 123\\\",\\\"telefono\\\":\\\"3571000000\\\",\\\"email\\\":\\\"test@test.com\\\",\\\"disciplinas\\\":\\\"Fútbol\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[]}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-PA-13 Aprobar club con nombre vacío",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El error menciona «nombreInstitucion»\", function () { pm.expect(pm.response.text()).to.include(\"nombreInstitucion\"); });",
+                      "if (pm.response.code === 201) { pm.environment.set(\"idClub\", pm.response.json().id); }"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/club/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "club",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"clubtestpa13@test.com\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-PA-16 Aprobar club con email inválido (\"test@\")",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El error menciona «email»\", function () { pm.expect(pm.response.text()).to.include(\"email\"); });",
+                      "if (pm.response.code === 201) { pm.environment.set(\"idClub\", pm.response.json().id); }"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/club/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "club",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombreInstitucion\": \"Club Test PA13\",\n  \"direccion\": \"Av. Test 123\",\n  \"telefono\": \"3571000000\",\n  \"email\": \"test@\",\n  \"disciplinas\": \"Fútbol\",\n  \"deporteAdaptado\": false,\n  \"fotos\": []\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-PA-16 CLEANUP Eliminar club de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idClub\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});",
+                      "pm.environment.unset(\"idClub\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/clubes/{{idClub}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "clubes",
+                    "{{idClub}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "TC-PA-16 CLEANUP Rechazar solicitud pendiente de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idSolicitud\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 400\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 400]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type presente (text/plain en 200 porque devuelve un String; application/json en 400)\", function () {",
+                      "    const ct = pm.response.headers.get(\"Content-Type\") || \"\";",
+                      "    pm.expect(ct.includes(\"text/plain\") || ct.includes(\"application/json\")).to.be.true;",
+                      "});",
+                      "pm.environment.unset(\"idSolicitud\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/rechazar/{{idSolicitud}}/cleanup-automatizado",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "rechazar",
+                    "{{idSolicitud}}",
+                    "cleanup-automatizado"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aprobar deportista con datos inválidos",
+          "item": [
+            {
+              "name": "TC-PA-10 SETUP Crear solicitud de deportista \"Deportista Test PA10\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "const b = pm.response.json();",
+                      "pm.test(\"Solicitud creada: id numerico, tipo DEPORTISTA, estado PENDIENTE\", function () {",
+                      "    pm.expect(b.id).to.be.a(\"number\");",
+                      "    pm.expect(b.tipo).to.eql(\"DEPORTISTA\");",
+                      "    pm.expect(b.estado).to.eql(\"PENDIENTE\");",
+                      "});",
+                      "pm.environment.set(\"idSolicitud\", b.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/solicitudes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "solicitudes"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"DEPORTISTA\",\n  \"datosAdjuntos\": \"{\\\"nombre\\\":\\\"Deportista Test PA10\\\",\\\"deporte\\\":\\\"Fútbol\\\",\\\"edad\\\":25,\\\"historia\\\":\\\"Historia de prueba\\\",\\\"logros\\\":\\\"Campeón local 2024\\\",\\\"deporteAdaptado\\\":false,\\\"fotos\\\":[],\\\"clubId\\\":null}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-PA-10 Aprobar deportista con edad -1",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El error menciona «edad»\", function () { pm.expect(pm.response.text()).to.include(\"edad\"); });",
+                      "if (pm.response.code === 201) { pm.environment.set(\"idDeportista\", pm.response.json().id); }"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/deportista/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "deportista",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test PA10\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": -1,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón local 2024\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-PA-11 Aprobar deportista con edad 0",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type application/json cuando hay body\", function () {",
+                      "    if (pm.response.text().length === 0) { return pm.expect(pm.response.text()).to.have.lengthOf(0); }",
+                      "    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\");",
+                      "});",
+                      "pm.test(\"El error menciona «edad»\", function () { pm.expect(pm.response.text()).to.include(\"edad\"); });",
+                      "if (pm.response.code === 201) { pm.environment.set(\"idDeportista\", pm.response.json().id); }"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/deportista/{{idSolicitud}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "deportista",
+                    "{{idSolicitud}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Deportista Test PA10\",\n  \"deporte\": \"Fútbol\",\n  \"edad\": 0,\n  \"historia\": \"Historia de prueba\",\n  \"logros\": \"Campeón local 2024\",\n  \"deporteAdaptado\": false,\n  \"fotos\": [],\n  \"clubId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "TC-PA-11 CLEANUP Eliminar deportista de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idDeportista\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type: no hay body que tipar (respuesta vacia)\", function () {",
+                      "    pm.expect(pm.response.text()).to.have.lengthOf(0);",
+                      "});",
+                      "pm.environment.unset(\"idDeportista\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/deportistas/{{idDeportista}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "deportistas",
+                    "{{idDeportista}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "TC-PA-11 CLEANUP Rechazar solicitud pendiente de prueba",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (!pm.environment.get(\"idSolicitud\")) { pm.execution.skipRequest(); }"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"HTTP 200 o 400\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 400]); });",
+                      "pm.test(\"Tiempo de respuesta < 1000 ms\", function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                      "pm.test(\"Content-Type presente (text/plain en 200 porque devuelve un String; application/json en 400)\", function () {",
+                      "    const ct = pm.response.headers.get(\"Content-Type\") || \"\";",
+                      "    pm.expect(ct.includes(\"text/plain\") || ct.includes(\"application/json\")).to.be.true;",
+                      "});",
+                      "pm.environment.unset(\"idSolicitud\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/rechazar/{{idSolicitud}}/cleanup-automatizado",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "rechazar",
+                    "{{idSolicitud}}",
+                    "cleanup-automatizado"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
