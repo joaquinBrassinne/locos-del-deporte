@@ -1,42 +1,20 @@
-# 🏆 Locos del Deporte - Río Tercero
+**CrazySports**
 
-**Locos del Deporte** es una plataforma integral diseñada para potenciar la visibilidad de deportistas, clubes y disciplinas deportivas menos difundidas en la ciudad de Río Tercero. El objetivo es centralizar la información deportiva local, facilitando el contacto entre instituciones, atletas y la comunidad.
+**Resumen del Proyecto:**
 
----
+Plataforma de software destinada a centralizar y visibilizar la información de todas las instituciones deportivas de Río Tercero y sus jugadores destacados. Se ofrece información detallada de los clubes, sus categorías y la ubicación precisa de las instalaciones.
 
-## 🚀 Propósito del Proyecto
-En ciudades con gran actividad deportiva como la nuestra, muchas veces el foco está en los deportes mayoritarios. Este software busca:
-* **Promover** deportes emergentes o con menos cobertura mediática.
-* **Conectar** a los clubes con nuevos socios a través de un mapa interactivo.
-* **Proveer** un espacio profesional para que los jugadores muestren sus logros y trayectoria.
+**Descripción Detallada:**
 
----
+El software "Locos del Deporte" busca ser el punto central de la comunidad deportiva de Río Tercero, mejorando significativamente la visibilidad tanto de los clubes como de sus jugadores a través de una plataforma moderna y accesible.
 
-## 🛠️ Tecnologías y Herramientas
-Para el modelado y planificación de este sistema se utilizaron:
-* **PlantUML**: Para la creación de diagramas de Casos de Uso y de Clases.
-* **GitHub Issues**: Para el seguimiento y gestión de Historias de Usuario (Metodología Ágil).
-* **Visual Studio Code**: Entorno de desarrollo para la documentación y modelado.
+La página principal funcionará como un muro de publicaciones dinámico y altamente interactivo, mostrando en tiempo real las novedades, resultados, eventos y anuncios de diversas instituciones, clubes y disciplinas. El contenido abarcará un amplio espectro de actividades, incluyendo tanto deportes físicos tradicionales como deportes mentales o de estrategia (ej. ajedrez), promoviendo la inclusión de todas las áreas competitivas.
 
----
+Los visitantes y usuarios registrados tendrán acceso a una potente funcionalidad de búsqueda avanzada. Esto les permitirá encontrar información específica y detallada sobre un deporte en particular, una institución, o incluso un jugador destacado. La información será cargada, gestionada y mantenida de forma directa por los propios clubes, garantizando su precisión y actualidad.
 
-## 📊 Documentación de Arquitectura
+Entre las funcionalidades clave para la interacción y localización, la plataforma integra un servicio de Google Maps que no solo mostrará la ubicación exacta de cada institución deportiva, sino que también podrá ofrecer datos relevantes como horarios de atención o disponibilidad de canchas. Adicionalmente, para aquellas instituciones que ya poseen presencia digital, se facilitará un botón de "Más Información" que actuará como enlace directo para redirigir al usuario a la URL externa del sitio web oficial de la institución.
 
-El proyecto cuenta con una sólida base de documentación técnica que puedes encontrar en la carpeta `/docs`:
-
-* **Diagramas de Casos de Uso:** Representan la interacción de Administradores, Jugadores, Clubes y Usuarios con el sistema.
-* **Diagrama de Clases:** Define la estructura de datos, atributos y relaciones (Herencia de usuarios, gestión de eventos y solicitudes).
-
----
-
-## 📋 Gestión del Proyecto (Backlog)
-Este repositorio utiliza **GitHub Issues** para gestionar las Historias de Usuario. Cada Issue representa una funcionalidad específica siguiendo el formato:
-> *"Como [rol], quiero [acción], para [beneficio]."*
-
-### Principales Módulos:
-1. **Gestión de Usuarios:** Acceso diferenciado por roles (Admin, Jugador, Club, Usuario Común).
-2. **Registro y Verificación:** Proceso de validación de identidad para instituciones.
-3. **Exploración:** Buscador de deportistas, integración con Google Maps y agendas de eventos.
+Para una navegación eficiente y segmentada, todo el contenido estará organizado meticulosamente en secciones específicas: Instituciones, para la información general de los entes; Clubes, detallando sus sedes y actividades; Disciplinas, organizadas por tipo de deporte; Jugadores, destacando a los jugadores locales; Deportes Inclusivos, con foco en actividades adaptadas (ej. para personas con discapacidades cognitivas); y Deportes Mentales o de Estrategia.
 
 ---
 
@@ -66,13 +44,3 @@ Los artifacts se conservan 14 días. Para correr lo mismo en local: ver `tests/p
 > **Un test pasa a Done en el Kanban solo cuando su PR está mergeado a la rama principal, fue revisado por otro integrante del equipo y la ejecución está en verde.**
 
 Cada PR usa la plantilla `.github/pull_request_template.md`: Issue que cierra (`Closes #N`), capa, tests agregados (`archivo::nombre`), resultado de la ejecución con el reporte adjunto, y el checklist (revisado por otro integrante, ejecución en verde, datos de prueba limpiados). Si un test falla porque detecta un bug real, no se cambia el esperado: se enlaza el Issue `bug` y el test no pasa a Done hasta que el bug se corrija.
-
----
-
-## 👥 Autores
-* **Joaquín Brassinne** - *Desarrollo y Documentación* - [MyGitUser](https://github.com/joaquinBrassinne)
-* **Leo Lopez** - *Desarrollo y Documentacion* - [MyGitUser](https://github.com/leolopez373)
-* **Damian Buscemi** - *Desarrollo y Documentacion* - [MyGitUser](https://github.com/EDAN13512)
-
----
-*Proyecto académico desarrollado para la universidad provincial de Cordoba*

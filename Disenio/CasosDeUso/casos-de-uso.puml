@@ -1,0 +1,95 @@
+@startuml
+' --- DIAGRAMA 1: AUTENTICACIÓN Y GESTIÓN DE ACCESO (HU-01, HU-02, HU-03) ---
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrador" as Admin
+actor "Jugador" as Player
+actor "Usuario Común" as User
+
+rectangle "Módulo de Seguridad" {
+    usecase "Login Administrador" as UC_LoginAdmin
+    usecase "Login Jugador" as UC_LoginPlayer
+    usecase "Login Usuario Común" as UC_LoginUser
+    usecase "Validar Credenciales y Rol" as UC_Auth
+    usecase "Acceder al Panel" as UC_Panel
+    usecase "Mostrar Error" as UC_Error
+
+    ' Relaciones de los actores
+    Admin -- UC_LoginAdmin
+    Player -- UC_LoginPlayer
+    User -- UC_LoginUser
+
+    ' Lógica interna compartida
+    UC_LoginAdmin ..> UC_Auth : <<include>>
+    UC_LoginPlayer ..> UC_Auth : <<include>>
+    UC_LoginUser ..> UC_Auth : <<include>>
+    
+    UC_Auth ..> UC_Panel : <<include>>
+    UC_Auth <.. UC_Error : <<extend>>
+}
+
+note bottom of UC_Auth : El sistema identifica si es Admin,\nJugador o Usuario para redirigir.
+@enduml
+
+@startuml
+' --- DIAGRAMA 2: REGISTRO Y SOLICITUDES (HU-04, HU-05) ---
+
+left to right direction
+
+actor "Visitante" as Guest
+actor "Club / Jugador Interesado" as Applicant
+actor "Administrador" as Admin
+
+rectangle "Módulo de Registros" {
+    usecase "Solicitar Registro (Club/Jugador)" as UC_Request
+    usecase "Notificar al Administrador" as UC_Notify
+    usecase "Registrar Usuario Común" as UC_RegisterUser
+    usecase "Verificar Email" as UC_VerifyEmail
+    usecase "Revisar Veracidad de Datos" as UC_Review
+    
+    Applicant -- UC_Request
+    Guest -- UC_RegisterUser
+    Admin -- UC_Review
+    
+    UC_Request ..> UC_Notify : <<include>>
+    UC_RegisterUser ..> UC_VerifyEmail : <<extend>>
+    UC_Notify ..> UC_Review : <<manual>>
+}
+
+note right of UC_Request : HU-04: Captura datos\npara validación oficial.
+note right of UC_RegisterUser : HU-05: Registro simple\npara visitantes.
+@enduml
+
+@startuml
+' --- DIAGRAMA 3: EXPLORACIÓN Y CONTENIDO (HU-06 a HU-10) ---
+
+left to right direction
+
+actor "Visitante / Usuario" as Viewer
+actor "Club" as Club
+
+rectangle "Módulo de Contenido y Agenda" {
+    usecase "Visualizar Perfiles" as UC_ViewProfile
+    usecase "Localizar en Mapa" as UC_Map
+    usecase "Redirigir a Web Externa" as UC_WebLink
+    usecase "Buscar y Filtrar" as UC_Search
+    usecase "Consultar Agenda de Eventos" as UC_Agenda
+    usecase "Gestionar Eventos" as UC_ManageEvents
+    
+    Viewer -- UC_ViewProfile
+    Viewer -- UC_Search
+    Viewer -- UC_Agenda
+    
+    Club -- UC_ManageEvents
+    
+    UC_ViewProfile <.. UC_Map : <<extend>>
+    UC_ViewProfile <.. UC_WebLink : <<extend>>
+}
+
+note top of UC_Search : HU-09: Búsqueda por nombre,\ndeporte o ubicación.
+note bottom of UC_WebLink : Solo si el club habilitó\nla URL externa (HU-08).
+note bottom of UC_Agenda : HU-10: Muestra fecha, hora\ny organizador.
+
+@enduml
