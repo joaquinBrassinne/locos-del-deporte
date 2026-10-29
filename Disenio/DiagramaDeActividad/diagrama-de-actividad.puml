@@ -1,0 +1,199 @@
+@startuml
+skinparam style strictuml
+skinparam ActivityBackgroundColor #E3F2FD
+skinparam ActivityBorderColor #1565C0
+
+|Usuario Común|
+start
+:Accede a la plataforma;
+fork
+  partition "CU-01: Consultar Perfil de Club" {
+    |Usuario Común|
+    :Ingresa al directorio;
+    :Selecciona un club;
+    |Sistema|
+    if (¿El club tiene información cargada?) then (Sí)
+      :Despliega historia, deportes y calendarios;
+    else (No)
+      :Muestra mensaje "Información no disponible";
+    endif
+  }
+fork again
+  partition "CU-02: Búsqueda de Deportistas" {
+    |Usuario Común|
+    :Ingresa criterios en el buscador;
+    |Sistema|
+    :Filtra la base de datos;
+    if (¿Hay resultados coincidentes?) then (Sí)
+      :Muestra lista con nombre y ubicación;
+    else (No)
+      :Notifica que no se encontraron resultados;
+    endif
+  }
+fork again
+  partition "CU-03: Gestionar Interacciones" {
+    |Usuario Común|
+    :Solicita suscripción;
+    |Sistema|
+    :Valida el estado de la sesión;
+    if (¿La sesión es válida?) then (Sí)
+      :Registra la interacción;
+    else (No)
+      :Redirige al login;
+    endif
+  }
+end fork
+|Usuario Común|
+stop
+@enduml
+
+@startuml
+skinparam style strictuml
+skinparam ActivityBackgroundColor #E8F5E9
+skinparam ActivityBorderColor #2E7D32
+
+|Representante de Club|
+start
+:Accede a su cuenta;
+fork
+  partition "CU-04: Gestionar Perfil Institucional" {
+    |Representante de Club|
+    :Accede al panel de control;
+    :Edita texto de historia o sube fotos;
+    :Guarda cambios;
+    |Sistema|
+    if (¿El formato de foto es correcto?) then (Sí)
+      :Actualiza el perfil;
+    else (No)
+      :Muestra error y pide subir otro archivo;
+    endif
+  }
+fork again
+  partition "CU-05: Administrar Oferta Deportiva" {
+    |Representante de Club|
+    :Selecciona "Añadir Deporte";
+    :Completa campos requeridos;
+    |Sistema|
+    if (¿Faltan campos obligatorios?) then (No)
+      :Publica la oferta en el perfil público;
+    else (Sí)
+      :Resalta campos faltantes y no permite registro;
+    endif
+  }
+fork again
+  partition "CU-06: Publicar Eventos y Resultados" {
+    |Representante de Club|
+    :Crea evento en el calendario;
+    |Sistema|
+    if (¿Creación exitosa?) then (Sí)
+      :Publica el evento;
+    else (No)
+      :Muestra mensaje de error;
+    endif
+  }
+end fork
+|Representante de Club|
+stop
+@enduml
+
+@startuml
+skinparam style strictuml
+skinparam ActivityBackgroundColor #FFF3E0
+skinparam ActivityBorderColor #E65100
+
+|Deportista|
+start
+:Inicia sesión;
+fork
+  partition "CU-07: Crear perfil" {
+    |Deportista|
+    :Accede a "Mi Perfil";
+    :Sube biografía y archivos multimedia;
+    |Sistema|
+    if (¿Formato de archivo correcto?) then (Sí)
+      :Guarda la información;
+    else (No)
+      :Rechaza archivo y notifica formatos admitidos;
+    endif
+  }
+fork again
+  partition "CU-08: Borrar perfil (Publicación)" {
+    |Deportista|
+    :Accede al perfil;
+    :Busca publicación;
+    :Selecciona el botón de borrar;
+    |Sistema|
+    if (¿Se pudo borrar?) then (Sí)
+      :Se borró la publicación;
+    else (No)
+      :Notifica error y pide intentar nuevamente;
+    endif
+  }
+fork again
+  partition "CU-09: Modificar perfil (Publicación)" {
+    |Deportista|
+    :Accede al perfil;
+    :Busca publicación;
+    :Selecciona botón de editar;
+    :Modifica la publicación;
+    :Presiona botón de guardar cambios;
+    |Sistema|
+    if (¿Límite de tiempo excedido?) then (No)
+      :Se guardó la modificación;
+    else (Sí)
+      :Muestra cartel de límite de tiempo excedido;
+    endif
+  }
+end fork
+|Deportista|
+stop
+@enduml
+
+@startuml
+skinparam style strictuml
+skinparam ActivityBackgroundColor #FCE4EC
+skinparam ActivityBorderColor #C2185B
+
+|Administrador|
+start
+:Accede al Panel Maestro;
+fork
+  partition "CU-10: Registrar club" {
+    |Administrador|
+    :Revisa la cola de pendientes;
+    :Registra el club o jugador;
+    |Sistema|
+    if (¿Registro exitoso?) then (Sí)
+      :Genera nombre de usuario y contraseña;
+    else (No)
+      :Lanza mensaje de que no se pudo registrar;
+    endif
+  }
+fork again
+  partition "CU-11: Gestión de Usuarios" {
+    |Administrador|
+    :Busca usuario por ID o correo;
+    :Ajusta permisos o aplica sanciones;
+    |Sistema|
+    if (¿Intenta modificar sus propios permisos?) then (No)
+      :Registra el log de la acción;
+    else (Sí)
+      :Muestra advertencia y bloquea automodificación;
+    endif
+  }
+fork again
+  partition "CU-12: Generar Reportes" {
+    |Administrador|
+    :Selecciona periodo y tipo de métrica;
+    |Sistema|
+    :Procesa analíticas de visitas e interacciones;
+    if (¿Hay datos para el periodo?) then (Sí)
+      :Se genera reporte;
+    else (No)
+      :Muestra mensaje "Sin datos para el rango";
+    endif
+  }
+end fork
+|Administrador|
+stop
+@enduml

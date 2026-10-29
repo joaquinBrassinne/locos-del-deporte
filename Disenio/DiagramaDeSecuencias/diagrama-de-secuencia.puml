@@ -1,0 +1,157 @@
+@startuml
+skinparam style strictuml
+actor "Usuario Común" as Usuario
+participant "Sistema" as Sistema
+
+== CU-01: Consultar Perfil de Club ==
+Usuario -> Sistema: Ingresa al directorio
+Usuario -> Sistema: Selecciona un club
+Sistema -> Sistema: Valida información del club
+
+alt Información disponible
+    Sistema --> Usuario: Despliega historia, deportes y calendarios
+else Información NO disponible (3a)
+    Sistema --> Usuario: Muestra mensaje "Información no disponible"
+end
+
+== CU-02: Búsqueda de Deportistas ==
+Usuario -> Sistema: Ingresa criterios en el buscador
+Sistema -> Sistema: Filtra la base de datos
+
+alt Resultados encontrados
+    Sistema --> Usuario: Muestra lista con nombre y ubicación
+else Sin resultados (2a)
+    Sistema --> Usuario: Notifica que no se encontraron resultados
+end
+
+== CU-03: Gestionar Interacciones ==
+Usuario -> Sistema: Solicita suscripción
+Sistema -> Sistema: Valida el estado de la sesión
+
+alt Sesión activa
+    Sistema -> Sistema: Registra la interacción
+    Sistema --> Usuario: Confirma suscripción exitosa
+else Sesión caducada (2a)
+    Sistema --> Usuario: Redirige al Login
+end
+@enduml
+
+@startuml
+skinparam style strictuml
+actor "Representante de Club" as Representante
+participant "Sistema" as Sistema
+
+== CU-04: Gestionar Perfil Institucional ==
+Representante -> Sistema: Accede al panel de control
+Representante -> Sistema: Edita texto de historia o sube fotos
+Representante -> Sistema: Guarda cambios
+Sistema -> Sistema: Valida formato de archivos
+
+alt Formato correcto
+    Sistema --> Representante: Guarda cambios y actualiza perfil
+else Formato incorrecto (3a)
+    Sistema --> Representante: Muestra error y pide subir otro archivo
+end
+
+== CU-05: Administrar Oferta Deportiva ==
+Representante -> Sistema: Selecciona "Añadir Deporte"
+Representante -> Sistema: Completa campos (categorías, coach, requisitos)
+Sistema -> Sistema: Valida campos obligatorios
+
+alt Campos completos
+    Sistema --> Representante: Publica la oferta en el perfil público
+else Faltan campos (2a)
+    Sistema --> Representante: Resalta campos faltantes y bloquea registro
+end
+
+== CU-06: Publicar Eventos y Resultados ==
+Representante -> Sistema: Crea evento en el calendario
+Sistema -> Sistema: Procesa creación de evento
+
+alt Creación exitosa
+    Sistema --> Representante: Confirma y publica el evento
+else Falla la creación (2a)
+    Sistema --> Representante: Muestra mensaje de error
+end
+@enduml
+
+@startuml
+skinparam style strictuml
+actor "Deportista" as Deportista
+participant "Sistema" as Sistema
+
+== CU-07: Crear perfil ==
+Deportista -> Sistema: Accede a "Mi Perfil"
+Deportista -> Sistema: Sube biografía y archivos multimedia
+Sistema -> Sistema: Valida archivos multimedia
+
+alt Formato correcto
+    Sistema --> Deportista: Guarda el perfil exitosamente
+else Formato incorrecto (2a)
+    Sistema --> Deportista: Rechaza archivo y notifica formatos admitidos
+end
+
+== CU-08: Borrar perfil (Publicación) ==
+Deportista -> Sistema: Accede al perfil y busca publicación
+Deportista -> Sistema: Selecciona el botón de borrar
+Sistema -> Sistema: Procesa solicitud de borrado
+
+alt Borrado exitoso
+    Sistema --> Deportista: Confirma que se borró la publicación
+else Falla de borrado (4a)
+    Sistema --> Deportista: Notifica error y pide intentar nuevamente
+end
+
+== CU-09: Modificar perfil (Publicación) ==
+Deportista -> Sistema: Accede al perfil y busca publicación
+Deportista -> Sistema: Selecciona botón de editar y modifica
+Deportista -> Sistema: Presiona botón de guardar cambios
+Sistema -> Sistema: Valida tiempo límite de modificación
+
+alt Dentro del tiempo límite
+    Sistema --> Deportista: Guarda la modificación
+else Límite de tiempo excedido (5a)
+    Sistema --> Deportista: Muestra cartel de tiempo límite excedido
+end
+@enduml
+
+@startuml
+skinparam style strictuml
+actor "Administrador" as Admin
+participant "Sistema" as Sistema
+
+== CU-10: Registrar club ==
+Admin -> Sistema: Revisa la cola de pendientes
+Admin -> Sistema: Registra club o jugador en el sistema
+Sistema -> Sistema: Procesa registro
+
+alt Registro exitoso
+    Sistema -> Sistema: Genera usuario y contraseña
+    Sistema --> Admin: Muestra credenciales generadas
+else Falla el registro (2a)
+    Sistema --> Admin: Lanza mensaje de que no se pudo registrar
+end
+
+== CU-11: Gestión de Usuarios ==
+Admin -> Sistema: Busca usuario por ID o correo
+Admin -> Sistema: Ajusta permisos o aplica sanciones
+Sistema -> Sistema: Valida nivel de privilegios
+
+alt Modifica a un tercero
+    Sistema -> Sistema: Registra el log de la acción
+    Sistema --> Admin: Confirma la modificación
+else Auto-modificación de Admin (2a)
+    Sistema --> Admin: Muestra advertencia y bloquea acción
+end
+
+== CU-12: Generar Reportes ==
+Admin -> Sistema: Selecciona periodo y tipo de métrica
+Sistema -> Sistema: Procesa analíticas de visitas/interacciones
+
+alt Hay datos disponibles
+    Sistema --> Admin: Genera y despliega el reporte
+else Sin datos (2a)
+    Sistema --> Admin: Muestra mensaje "Sin datos para el rango"
+end
+@enduml
+
