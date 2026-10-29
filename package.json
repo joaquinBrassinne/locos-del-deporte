@@ -1,0 +1,12 @@
+{
+  "name": "crazysports-tests",
+  "private": true,
+  "description": "Tareas de prueba de API (Postman/Newman) de Locos del Deporte",
+  "scripts": {
+    "test:api": "newman run tests/postman/CrazySports.postman_collection.json -e tests/postman/entorno-local.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export tests/postman/reports/reporte.html"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
+}
