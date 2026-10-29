@@ -61,6 +61,12 @@ Con la CLI de GitHub: `gh run list --workflow=tests.yml` y luego `gh run downloa
 
 Los artifacts se conservan 14 días. Para correr lo mismo en local: ver `tests/postman/README.md` y `cd Backend && ./mvnw clean test`.
 
+### Definición de Done en el Kanban
+
+> **Un test pasa a Done en el Kanban solo cuando su PR está mergeado a la rama principal, fue revisado por otro integrante del equipo y la ejecución está en verde.**
+
+Cada PR usa la plantilla `.github/pull_request_template.md`: Issue que cierra (`Closes #N`), capa, tests agregados (`archivo::nombre`), resultado de la ejecución con el reporte adjunto, y el checklist (revisado por otro integrante, ejecución en verde, datos de prueba limpiados). Si un test falla porque detecta un bug real, no se cambia el esperado: se enlaza el Issue `bug` y el test no pasa a Done hasta que el bug se corrija.
+
 ---
 
 ## 👥 Autores
