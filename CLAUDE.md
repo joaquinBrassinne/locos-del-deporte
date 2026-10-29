@@ -59,13 +59,22 @@ Entidades: `Club`, `Deportista` (ManyToOne a `Club`), `SolicitudRegistro`, `Admi
 
 ## Pruebas
 
-Suite existente documentada en `docs/tests-backend.md`: matriz `TC-XXX-NN` ↔ test, más la lista de defectos conocidos (BUG-01 a BUG-04: 404 vs 400/500, validaciones faltantes de DTO, `AdminService` sin `@Transactional` ni `perfilCreadoId`, `rechazar` pisa `fechaEnvio`). Hay tests ROJOS a propósito: documentan bugs reales.
+### Fuentes de verdad (en `docs/`)
 
-Reglas para escribir pruebas:
-- El resultado esperado sale de la planilla de casos y de los criterios de aceptación, **no** de lo que el sistema devuelve hoy. Si el sistema no cumple, el test debe fallar y se reporta como bug; no ajustar el assert para que pase.
+- `Plan_de_Pruebas_Locos_del_Deporte_v1_1_Grupo_6.md`: alcance, trazabilidad RF ↔ HU ↔ CA (CA-1.1 … CA-10.4), criterios de aceptación/rechazo, datos base DS-01.
+- `Planilla_Test_Case_CrazySports_v1_10.xlsx`: 78 casos en 7 hojas, una por módulo. Columnas clave: ID, HU/RF/CA, Datos de prueba, Pasos, **Resultado esperado**, Postcondición / limpieza, Prioridad. Prefijos de ID: `TC-VP` (vista pública, 16), `TC-SR` (solicitud de registro, 10), `TC-AU` (autenticación, 11), `TC-PA` (panel admin, 16), `TC-API` (clubes y deportistas, 12), `TC-DB` (persistencia, 7), `TC-IT` (integración front-back, 6). Hoja "Leyenda y supuestos": rangos asumidos (edad 1–120, nombre ≤255, teléfono solo dígitos, email con formato válido) y nombres reales de tablas SQL (`solicitudes_registro`, `clubs`, `deportistas`, `admin`).
+- Los casos de la planilla están redactados para ejecución manual (Swagger + TablePlus); los tests automatizados los traducen a MockMvc/Testcontainers.
+- Ojo: `docs/tests-backend.md` documenta la suite JUnit ya existente con **otros IDs** (`TC-CTR-SOL-11`, `TC-ADM-02`, …) que no coinciden con los de la planilla. Los tests nuevos usan los IDs de la planilla.
+- Defectos conocidos (BUG-01 a BUG-04 en `docs/tests-backend.md`): ids inexistentes dan 400/500 en vez de 404 (CA-10.3), validaciones faltantes de DTO, `AdminService` sin `@Transactional` ni `perfilCreadoId`, `rechazar` pisa `fechaEnvio`. Hay tests ROJOS a propósito: documentan bugs reales.
+
+### Datos base DS-01
+
+Clubes: Club Atlético Río Tercero (Fútbol), Club Náutico Río Tercero (Natación, `deporteAdaptado=true`), Club Atlético Sur (Básquet) → APROBADOS; Club Pendiente Uno (Vóley), Club Pendiente Dos (Fútbol) → PENDIENTES. Deportistas APROBADOS: Lucía Pérez (Fútbol), Mateo Gómez (Básquet), Sofía Díaz (Fútbol), Tomás Ruiz (Natación); PENDIENTE: Valentina Cruz (Vóley). Derivados esperados: 3 clubes, 4 deportistas, 3 disciplinas distintas, 1 club inclusivo. No hay script de seed: el plan los carga enviando solicitudes por Swagger y aprobando con `AdminRoot`.
+
+### Reglas para escribir pruebas
+
+- El resultado esperado sale de la planilla y de los CA, **no** de lo que el sistema devuelve hoy. Si el sistema no cumple, el test debe fallar y el fallo se reporta como bug; no ajustar el assert para que pase.
 - Cada test limpia los datos que crea.
-- Nombre del test: `TC-XXX-NN_descripcion`, para trazar contra la planilla. (La suite actual usa `debeX_cuandoY` y mapea el ID en `docs/tests-backend.md`; en tests nuevos usar el prefijo `TC-XXX-NN_`.)
-- Verificar las rutas leyendo los controllers; no asumirlas.
-- Datos base DS-01: 3 clubes aprobados, 2 pendientes, 4 deportistas aprobados y 1 pendiente.
-
-**Pendiente de ubicar**: el "Plan de pruebas v1.1", la planilla de casos y el seed DS-01 **no están en el repo** (`docs/` solo tiene `tests-backend.md`; `Backend/init.sql` no los referencia). Pedirlos al usuario antes de escribir tests contra ellos; no inferir resultados esperados desde el código.
+- Nombre: `TC-XXX-NN_descripcion`, para trazar contra la planilla.
+- Verificar las rutas leyendo los controllers; no asumirlas (la planilla v1_10 ya corrigió las rutas de aprobar/rechazar a `/api/admin/*`, que responden 201 al aprobar).
+- Los campos del JSON de club usan `nombreInstitucion`; el de deportista, `nombre`, `deporte`, `edad`, `historia`, `logros`, `deporteAdaptado`, `fotos`, `clubId`.
