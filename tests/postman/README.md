@@ -21,7 +21,7 @@ devuelve hoy: si el backend no cumple, el request falla y se informa como bug (v
 
 - Backend en `http://localhost:8080` y PostgreSQL arriba (`docker compose up -d`, luego `./mvnw spring-boot:run` en `Backend/`).
 - Node.js 20+ y **Newman 6 o superior** (los requests CLEANUP usan `pm.execution.skipRequest()`).
-- Para TC-AU-05 y TC-AU-10 la BD debe tener cargado **DS-01** (3 clubes y 4 deportistas aprobados, ver el plan de pruebas). El resto de los casos no depende de DS-01: crean y borran sus propios datos.
+- Para TC-AU-05 y TC-AU-10 la BD debe tener cargado **DS-01** (3 clubes y 4 deportistas aprobados, ver el plan de pruebas). Sobre una BD limpia se carga con `node tests/postman/seed-ds01.js` (usa la API; variables opcionales `BASE_URL`, `ADMIN_USER`, `ADMIN_PASSWORD`). El workflow de CI hace exactamente eso antes de Newman. El resto de los casos no depende de DS-01: crean y borran sus propios datos.
 - Si cambian las credenciales del admin (`app.admin.*`), actualizar `adminUser` / `adminPassword` en el entorno.
 
 ## Cómo ejecutar
