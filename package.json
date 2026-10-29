@@ -5,11 +5,16 @@
   "scripts": {
     "test:api": "newman run tests/postman/CrazySports.postman_collection.json -e tests/postman/entorno-local.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export tests/postman/reports/reporte.html",
     "test:e2e": "playwright test -c tests/e2e",
-    "test:e2e:report": "playwright show-report tests/e2e/playwright-report"
+    "test:e2e:report": "playwright show-report tests/e2e/playwright-report",
+    "test:a11y": "playwright test -c tests/e2e specs/a11y",
+    "a11y:lighthouse": "node tests/a11y/lighthouse.mjs",
+    "a11y:diagnostico": "node tests/a11y/diagnostico-manual.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
+    "lighthouse": "^13.6.0",
     "newman": "^6.2.1",
     "newman-reporter-htmlextra": "^1.23.1",
     "typescript": "^7.0.2"

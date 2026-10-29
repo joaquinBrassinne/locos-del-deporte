@@ -1,0 +1,302 @@
+{
+  "fecha": "2026-10-29T22:08:08.490Z",
+  "base": "http://localhost:5173",
+  "paginas": {
+    "/": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 1,
+      "encabezados": [
+        "H1:EL DEPORTE DE NUESTRA CIUDADEN UN SOLO L",
+        "H2:DEPORTISTAS DESTACADOS",
+        "H3:Lucía Pérez",
+        "H3:Mateo Gómez",
+        "H3:Sofía Díaz",
+        "H3:Tomás Ruiz",
+        "H2:CLUBES E INSTITUCIONES",
+        "H3:Club Atlético Río Tercero",
+        "H3:Club Náutico Río Tercero",
+        "H3:Club Atlético Sur",
+        "H2:MAPA DEPORTIVO",
+        "H2:SOBRE NOSOTROS",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=1",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 24
+    },
+    "/clubes": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 1,
+      "encabezados": [
+        "H1:CLUBES E INSTITUCIONES",
+        "H3:Club Atlético Río Tercero",
+        "H3:Club Náutico Río Tercero",
+        "H3:Club Atlético Sur",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=1",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 0
+    },
+    "/deportistas": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 1,
+      "encabezados": [
+        "H1:DEPORTISTAS DESTACADOS",
+        "H3:Lucía Pérez",
+        "H3:Mateo Gómez",
+        "H3:Sofía Díaz",
+        "H3:Tomás Ruiz",
+        "H2:SOBRE NOSOTROS",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=1",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 0
+    },
+    "/buscar": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 1,
+      "encabezados": [
+        "H1:BUSCAR EN EL DEPORTE",
+        "H2:🏛️Clubes e Instituciones (3)",
+        "H3:Club Atlético Río Tercero",
+        "H3:Club Náutico Río Tercero",
+        "H3:Club Atlético Sur",
+        "H2:🏃Deportistas Destacados (4)",
+        "H3:Lucía Pérez",
+        "H3:Mateo Gómez",
+        "H3:Sofía Díaz",
+        "H3:Tomás Ruiz",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=2",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 0
+    },
+    "/mapa": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 0,
+      "encabezados": [
+        "H2:MAPA DEPORTIVO",
+        "H3:ESPACIOS Y CLUBES DESTACADOS",
+        "H2:SOBRE NOSOTROS",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=1",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 24
+    },
+    "/solicitud": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 1,
+      "encabezados": [
+        "H1:SOLICITUD DE REGISTRO",
+        "H2:Datos Institucionales Básicos",
+        "H2:Contacto y Ubicación",
+        "H3:Deporte Inclusivo / Adaptado",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=1",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 0
+    },
+    "/login": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 0,
+      "encabezados": [
+        "H2:Acceso Administrativo",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=1",
+        "nav=1",
+        "main=1",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 0
+    },
+    "/admin": {
+      "htmlLang": "en",
+      "titulo": "Deporte Río Tercero",
+      "h1": 1,
+      "encabezados": [
+        "H1:ADMIN PANEL",
+        "H2:PANEL DE ADMINISTRACIÓN",
+        "H3:Cola de Solicitudes Recientes",
+        "H4:Club Pendiente Uno",
+        "H4:Club Pendiente Dos",
+        "H4:Valentina Cruz",
+        "H2:Ficha: Club Pendiente Uno",
+        "H3:Explorar",
+        "H3:Participar",
+        "H3:Contacto"
+      ],
+      "enlaceSaltarContenido": false,
+      "landmarks": [
+        "header=2",
+        "nav=2",
+        "main=2",
+        "footer=1"
+      ],
+      "imgsSinAlt": 0,
+      "imgsTotal": 0
+    }
+  },
+  "reflow200": {
+    "/": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/clubes": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/deportistas": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/buscar": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/mapa": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/solicitud": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/login": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    },
+    "/admin": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "desbordaHorizontal": false
+    }
+  },
+  "login": [
+    {
+      "placeholder": "Usuario",
+      "label": false,
+      "ariaLabel": null,
+      "ariaLabelledby": null,
+      "title": null
+    },
+    {
+      "placeholder": "Contraseña",
+      "label": false,
+      "ariaLabel": null,
+      "ariaLabelledby": null,
+      "title": null
+    }
+  ],
+  "loginFoco": {
+    "inputOutlineStyle": "none",
+    "inputBoxShadow": "none",
+    "contenedorBorde": "1px solid rgb(209, 213, 219)",
+    "contenedorOutline": "none",
+    "contenedorBoxShadow": "none"
+  },
+  "loginError": {
+    "texto": "Credenciales incorrectas. Acceso denegado.",
+    "role": null,
+    "ariaLive": null
+  },
+  "modalClub": {
+    "abierto": true,
+    "role": null,
+    "ariaModal": false,
+    "ariaLabelledby": false,
+    "botonCerrarNombreAccesible": null,
+    "focoDentroDelModal": false,
+    "elementoConFoco": "BUTTON Ver más",
+    "cierraConEscape": true,
+    "focoVuelveAlBoton": true
+  },
+  "toggle": {
+    "role": null,
+    "tabindex": null,
+    "ariaChecked": null,
+    "esElementoNativo": false,
+    "recibeFocoConTab": false
+  },
+  "solicitudErrores": {
+    "camposAriaInvalid": 2,
+    "conAriaDescribedby": 0,
+    "mensajesConRolAlert": 0,
+    "regionesAriaLive": 0,
+    "camposTotales": 11,
+    "camposSinLabelNiAria": 1,
+    "focoTrasEnviar": "BUTTON"
+  }
+}
