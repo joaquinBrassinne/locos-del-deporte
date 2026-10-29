@@ -235,15 +235,32 @@ export const ClubesPage = () => {
 
         {/* Grid de Tarjetas con datos reales del backend */}
         {!loading && !error && clubesFiltrados.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clubesFiltrados.map((club) => (
-              <ClubCard
-                key={club.id}
-                club={club}
-                onVerMas={(c) => setSelectedClub(c)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clubesFiltrados.map((club) => (
+                <ClubCard
+                  key={club.id}
+                  club={club}
+                  onVerMas={(c) => setSelectedClub(c)}
+                />
+              ))}
+            </div>
+
+            {/* Botón Ver todos los clubes */}
+            <div className="text-center mt-12 mb-16">
+              <button
+                type="button"
+                onClick={() => {
+                  handleResetFiltros();
+                  window.scrollTo({ top: 350, behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#141414] hover:bg-[#1f1f1f] text-neutral-200 hover:text-white text-xs font-semibold border border-neutral-700/80 hover:border-[#E8C766] transition-all shadow-md active:scale-95 cursor-pointer"
+              >
+                <span>Ver todos los clubes</span>
+                <span>→</span>
+              </button>
+            </div>
+          </>
         )}
       </section>
 

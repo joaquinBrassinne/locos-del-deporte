@@ -4,6 +4,7 @@ import { getClubes, getDeportistas } from '../../services/api';
 import type { Club, Deportista } from '../../types/Index';
 import DeportistaCard from '../../components/DeportistaCard/DeportistaCard';
 import ClubCard from '../../components/ClubCard/ClubCard';
+import MapaDeportivoSection from '../../components/Map/MapaDeportivoSection';
 
 const DISCIPLINAS = [
   'Todos',
@@ -354,7 +355,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección 4: About */}
+      {/* Sección 4: Mapa Deportivo */}
+      <section id="mapa" className="py-20 border-t border-neutral-900 bg-[#0a0a0a]">
+        <MapaDeportivoSection dbClubs={clubes} />
+      </section>
+
+      {/* Sección 5: About */}
       <section
         id="sobre-nosotros"
         className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center border-t border-neutral-900"

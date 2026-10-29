@@ -1,4 +1,3 @@
-// src/components/DetalleModal.tsx
 import type { Solicitud } from '../types/Index';
 import { FaTimes } from 'react-icons/fa';
 
@@ -8,13 +7,11 @@ interface Props {
 }
 
 export default function DetalleModal({ solicitud, onClose }: Props) {
-  // Parseamos el JSON para extraer toda la info del DTO original
   const datos = JSON.parse(solicitud.datosAdjuntos);
   const isClub = solicitud.tipo === 'CLUB';
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      {/* Detenemos la propagación para que al hacer clic dentro del modal no se cierre */}
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         
         <button className="modal-close-btn" onClick={onClose}>
@@ -62,7 +59,7 @@ export default function DetalleModal({ solicitud, onClose }: Props) {
             <p><strong>Sitio Web / Red Social:</strong> <a href={datos.sitioWebUrl} target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>{datos.sitioWebUrl}</a></p>
           )}
 
-          {/* Renderizado de Fotos */}
+          {/* FOTITOS */}
           {datos.fotos && datos.fotos.length > 0 && (
             <div style={{ marginTop: '15px' }}>
               <strong>Archivos Adjuntos (Fotos):</strong>
