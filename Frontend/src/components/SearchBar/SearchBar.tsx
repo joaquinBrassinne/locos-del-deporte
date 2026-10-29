@@ -71,14 +71,18 @@ export const SearchBar = ({
         className="w-full bg-transparent text-sm text-neutral-200 placeholder-neutral-500 outline-none pr-3"
       />
 
-      {/* Botón Limpiar */}
+      {/* Botón Limpiar con × */}
       {valor !== '' && (
         <button
           type="button"
           onClick={handleLimpiar}
-          className="shrink-0 bg-[#242424] hover:bg-[#303030] text-neutral-300 hover:text-white text-xs px-3 py-1 rounded-full border border-neutral-700/60 transition-colors cursor-pointer select-none font-medium mr-1"
+          className="shrink-0 p-1 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-full transition-colors cursor-pointer mr-1"
+          title="Limpiar búsqueda"
+          aria-label="Limpiar búsqueda"
         >
-          Limpiar
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       )}
     </form>

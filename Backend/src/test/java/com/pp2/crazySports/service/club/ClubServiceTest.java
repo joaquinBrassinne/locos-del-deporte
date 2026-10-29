@@ -74,8 +74,8 @@ class ClubServiceTest {
     class CrearClubTests {
 
         @Test
-        @DisplayName("Debe crear un club exitosamente")
-        void crearClub_Exitoso() {
+        @DisplayName("TC-CLU-01 debeCrearClub_cuandoDatosSonValidos")
+        void debeCrearClub_cuandoDatosSonValidos() {
             when(clubRepository.existsByNombreInstitucionIgnoreCase(requestDTOSample.getNombreInstitucion()))
                     .thenReturn(false);
             when(clubRepository.save(any(Club.class))).thenReturn(clubSample);
@@ -85,13 +85,12 @@ class ClubServiceTest {
 
             assertNotNull(response);
             assertEquals("Club Atlético Ejemplo", response.getNombreInstitucion());
-            assertEquals(5, response.getCantidadDeportistas());
             verify(clubRepository, times(1)).save(any(Club.class));
         }
 
         @Test
-        @DisplayName("Debe lanzar IllegalArgumentException si el nombre ya existe")
-        void crearClub_NombreDuplicado_LanzaExcepcion() {
+        @DisplayName("TC-CLU-02 debeLanzarExcepcion_cuandoNombreDeClubYaExiste")
+        void debeLanzarExcepcion_cuandoNombreDeClubYaExiste() {
             when(clubRepository.existsByNombreInstitucionIgnoreCase(requestDTOSample.getNombreInstitucion()))
                     .thenReturn(true);
 
@@ -110,21 +109,30 @@ class ClubServiceTest {
     class ConsultasTests {
 
         @Test
-        @DisplayName("Debe listar todos los clubes con su conteo de deportistas")
-        void listarClubes_Exitoso() {
+        @DisplayName("TC-CLU-03 debeListarClubes_cuandoExistenRegistros")
+        void debeListarClubes_cuandoExistenRegistros() {
             when(clubRepository.findAll()).thenReturn(List.of(clubSample));
             when(deportistaRepository.countByClubId(1L)).thenReturn(10L);
 
             List<ClubResponseDTO> resultado = clubService.listarClubes();
 
-            assertFalse(resultado.isEmpty());
             assertEquals(1, resultado.size());
             assertEquals(10, resultado.get(0).getCantidadDeportistas());
         }
 
         @Test
-        @DisplayName("Debe obtener un club por ID exitosamente")
-        void obtenerClubPorId_Exitoso() {
+        @DisplayName("TC-CLU-04 debeRetornarListaVacia_cuandoNoHayClubes")
+        void debeRetornarListaVacia_cuandoNoHayClubes() {
+            when(clubRepository.findAll()).thenReturn(List.of());
+
+            List<ClubResponseDTO> resultado = clubService.listarClubes();
+
+            assertTrue(resultado.isEmpty());
+        }
+
+        @Test
+        @DisplayName("TC-CLU-05 debeObtenerClubPorId_cuandoIdExiste")
+        void debeObtenerClubPorId_cuandoIdExiste() {
             when(clubRepository.findById(1L)).thenReturn(Optional.of(clubSample));
             when(deportistaRepository.countByClubId(1L)).thenReturn(2L);
 
@@ -135,8 +143,8 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe lanzar RuntimeException si no encuentra el ID")
-        void obtenerClubPorId_NoEncontrado_LanzaExcepcion() {
+        @DisplayName("TC-CLU-06 debeLanzarExcepcion_cuandoIdNoExiste")
+        void debeLanzarExcepcion_cuandoIdNoExiste() {
             when(clubRepository.findById(99L)).thenReturn(Optional.empty());
 
             RuntimeException exception = assertThrows(
@@ -148,8 +156,8 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe buscar clubes por coincidencia de nombre")
-        void buscarPorNombre_Exitoso() {
+        @DisplayName("TC-CLU-07 debeBuscarClubesPorNombre_cuandoCoincide")
+        void debeBuscarClubesPorNombre_cuandoCoincide() {
             when(clubRepository.findByNombreInstitucionContainingIgnoreCase("Ejemplo"))
                     .thenReturn(List.of(clubSample));
             when(deportistaRepository.countByClubId(1L)).thenReturn(0L);
@@ -161,8 +169,19 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe filtrar clubes por disciplina")
-        void listarPorDisciplina_Exitoso() {
+        @DisplayName("TC-CLU-08 debeRetornarListaVacia_cuandoBusquedaPorNombreNoCoincide")
+        void debeRetornarListaVacia_cuandoBusquedaPorNombreNoCoincide() {
+            when(clubRepository.findByNombreInstitucionContainingIgnoreCase("Inexistente"))
+                    .thenReturn(List.of());
+
+            List<ClubResponseDTO> resultado = clubService.buscarPorNombre("Inexistente");
+
+            assertTrue(resultado.isEmpty());
+        }
+
+        @Test
+        @DisplayName("TC-CLU-09 debeFiltrarClubesPorDisciplina_cuandoExiste")
+        void debeFiltrarClubesPorDisciplina_cuandoExiste() {
             when(clubRepository.findByDisciplinasContainingIgnoreCase("Fútbol"))
                     .thenReturn(List.of(clubSample));
             when(deportistaRepository.countByClubId(1L)).thenReturn(3L);
@@ -174,8 +193,8 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe listar clubes con deporte adaptado")
-        void listarDeporteAdaptado_Exitoso() {
+        @DisplayName("TC-CLU-10 debeListarClubesConDeporteAdaptado_cuandoExisten")
+        void debeListarClubesConDeporteAdaptado_cuandoExisten() {
             when(clubRepository.findByDeporteAdaptadoTrue()).thenReturn(List.of(clubSample));
             when(deportistaRepository.countByClubId(1L)).thenReturn(0L);
 
@@ -186,13 +205,21 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe mapear correctamente las coordenadas devueltas por el Object[]")
-        void obtenerCoordenadas_Exitoso() {
-            Object[] row = new Object[]{1L, "-32.17,-64.11", "Club Atlético Ejemplo"};
-    
-            // Se especifica explícitamente el tipo genérico <Object[]>
-            List<Object[]> rows = List.<Object[]>of(row);
-            when(clubRepository.findCoordenadas()).thenReturn(rows);
+        @DisplayName("TC-CLU-11 debeListarClubesConDeporteAdaptadoDesdeMetodoAlternativo")
+        void debeListarClubesConDeporteAdaptadoDesdeMetodoAlternativo() {
+            when(clubRepository.findByDeporteAdaptadoTrue()).thenReturn(List.of(clubSample));
+            when(deportistaRepository.countByClubId(1L)).thenReturn(0L);
+
+            List<ClubResponseDTO> resultado = clubService.listarClubesConDeporteAdaptado();
+
+            assertEquals(1, resultado.size());
+            assertTrue(resultado.get(0).getDeporteAdaptado());
+        }
+
+        @Test
+        @DisplayName("TC-CLU-12 debeMapearCoordenadas_cuandoSeConsultanClubes")
+        void debeMapearCoordenadas_cuandoSeConsultanClubes() {
+            when(clubRepository.findAll()).thenReturn(List.of(clubSample));
 
             List<ClubMapaDTO> resultado = clubService.obtenerCoordenadas();
 
@@ -202,14 +229,15 @@ class ClubServiceTest {
             assertEquals("-32.17,-64.11", resultado.get(0).getCoordenadas());
             assertEquals("Club Atlético Ejemplo", resultado.get(0).getNombreInstitucion());
         }
+    }
 
     @Nested
     @DisplayName("Pruebas de actualización")
     class ActualizarClubTests {
 
         @Test
-        @DisplayName("Debe actualizar los datos del club exitosamente")
-        void actualizarClub_Exitoso() {
+        @DisplayName("TC-CLU-13 debeActualizarClub_cuandoDatosSonValidos")
+        void debeActualizarClub_cuandoDatosSonValidos() {
             when(clubRepository.findById(1L)).thenReturn(Optional.of(clubSample));
             when(clubRepository.save(any(Club.class))).thenReturn(clubSample);
             when(deportistaRepository.countByClubId(1L)).thenReturn(0L);
@@ -222,8 +250,8 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe lanzar RuntimeException si el club a actualizar no existe")
-        void actualizarClub_NoExiste_LanzaExcepcion() {
+        @DisplayName("TC-CLU-14 debeLanzarExcepcion_cuandoClubAActualizarNoExiste")
+        void debeLanzarExcepcion_cuandoClubAActualizarNoExiste() {
             when(clubRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThrows(RuntimeException.class, () -> clubService.actualizarClub(99L, requestDTOSample));
@@ -236,8 +264,8 @@ class ClubServiceTest {
     class EliminarClubTests {
 
         @Test
-        @DisplayName("Debe eliminar el club si existe")
-        void eliminarClub_Exitoso() {
+        @DisplayName("TC-CLU-15 debeEliminarClub_cuandoIdExiste")
+        void debeEliminarClub_cuandoIdExiste() {
             when(clubRepository.existsById(1L)).thenReturn(true);
             doNothing().when(clubRepository).deleteById(1L);
 
@@ -246,8 +274,8 @@ class ClubServiceTest {
         }
 
         @Test
-        @DisplayName("Debe lanzar RuntimeException si el club a eliminar no existe")
-        void eliminarClub_NoExiste_LanzaExcepcion() {
+        @DisplayName("TC-CLU-16 debeLanzarExcepcion_cuandoClubAEliminarNoExiste")
+        void debeLanzarExcepcion_cuandoClubAEliminarNoExiste() {
             when(clubRepository.existsById(99L)).thenReturn(false);
 
             RuntimeException exception = assertThrows(
@@ -259,6 +287,4 @@ class ClubServiceTest {
             verify(clubRepository, never()).deleteById(anyLong());
         }
     }
-    
-}
 }

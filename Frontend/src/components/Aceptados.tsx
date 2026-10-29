@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { Solicitud } from '../types/Index';
-import { FaEye, FaCheckCircle, FaIdBadge } from 'react-icons/fa'; // Sumamos íconos
-import DetalleModal from './DetalleModal'; // Importamos el modal
+import { FaEye, FaCheckCircle, FaIdBadge } from 'react-icons/fa'; 
+import DetalleModal from './DetalleModal'; 
 import './AdminPanel.css'; 
 
 export function Aceptados() {
     const [aceptados, setAceptados] = useState<Solicitud[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     
-    // Nuevo estado para controlar qué solicitud está abierta en el modal
     const [solicitudSeleccionada, setSolicitudSeleccionada] = useState<Solicitud | null>(null);
 
     useEffect(() => {

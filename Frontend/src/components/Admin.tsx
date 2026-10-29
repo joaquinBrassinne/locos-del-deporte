@@ -1,4 +1,3 @@
-// src/components/Admin.tsx
 import { useState, useEffect } from 'react';
 import type { Solicitud } from '../types/Index';
 import './AdminPanel.css';
