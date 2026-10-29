@@ -135,17 +135,17 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      # Playwright: no hay tests E2E todavía. Si se agregan, este paso sube el reporte, los trace
-      # y los videos (por defecto Playwright los deja en playwright-report/ y test-results/).
+      # Playwright: los tests de tests/e2e todavía no se ejecutan en este workflow. Si se agrega
+      # ese paso, este upload sube el reporte HTML, los trace y los videos de tests/e2e/.
       - name: Subir reportes de Playwright (si existen)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: |
+            tests/e2e/playwright-report/
+            tests/e2e/test-results/
             playwright-report/
             test-results/
-            Frontend/playwright-report/
-            Frontend/test-results/
           if-no-files-found: ignore
           retention-days: 14
