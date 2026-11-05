@@ -10,3 +10,12 @@ tests/postman/reports/
 tests/e2e/playwright-report/
 tests/e2e/test-results/
 tests/a11y/reports/lighthouse-*.report.json
+
+# Mercurial (no versionar)
+.hg/
+.hgignore
+.hgtags
+
+# Salidas de testing
+Testing/*.log
+Testing/reporte-postman.*
