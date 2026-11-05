@@ -2,3 +2,7 @@
 .hg/
 .hgignore
 .hgtags
+
+# Salidas de testing
+Testing/*.log
+Testing/reporte-postman.*
