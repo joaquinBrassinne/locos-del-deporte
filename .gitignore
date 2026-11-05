@@ -1,0 +1,4 @@
+# Mercurial (no versionar)
+.hg/
+.hgignore
+.hgtags
