@@ -1,0 +1,1288 @@
+{
+  "info": {
+    "name": "CrazySports API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{adminUser}}"
+      },
+      {
+        "key": "password",
+        "value": "{{adminPass}}"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "adminUser",
+      "value": "AdminRoot"
+    },
+    {
+      "key": "adminPass",
+      "value": "locos1234"
+    },
+    {
+      "key": "solicitudId",
+      "value": "1"
+    },
+    {
+      "key": "clubId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Públicos (HU-06, HU-07, HU-09)",
+      "item": [
+        {
+          "name": "GET clubes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Es array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET deportistas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET clubes buscar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/buscar?nombre=club",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "club"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET clubes adaptado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/adaptado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "adaptado"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET deportistas adaptado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas/adaptado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas",
+                "adaptado"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET club inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('404 esperado', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "999999"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Solicitudes (HU-04)",
+      "item": [
+        {
+          "name": "POST solicitud CLUB válida (público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set('solicitudId', j.id);",
+                  "pm.test('Devuelve id', () => pm.expect(j.id).to.exist);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"Club Postman\\\",\\\"direccion\\\":\\\"Calle 123\\\",\\\"coordenadas\\\":\\\"-32.1712,-64.3450\\\",\\\"disciplinas\\\":\\\"Fútbol\\\",\\\"telefono\\\":\\\"3571123456\\\",\\\"email\\\":\\\"club@test.com\\\",\\\"deporteAdaptado\\\":false}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST solicitud sin tipo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"datosAdjuntos\": \"{}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST solicitud sin datosAdjuntos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"CLUB\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET solicitudes SIN credenciales",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET solicitudes pendientes (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes?estado=PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PENDIENTE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET solicitud por id (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{solicitudId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes",
+                "{{solicitudId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Admin: moderación (HU-01)",
+      "item": [
+        {
+          "name": "PATCH aprobar solicitud",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{solicitudId}}/aprobar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes",
+                "{{solicitudId}}",
+                "aprobar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT rechazar solicitud",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('2xx/4xx controlado', () => pm.expect(pm.response.code).to.be.oneOf([200,400,404,409]));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/rechazar/{{solicitudId}}/Datos incompletos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "rechazar",
+                "{{solicitudId}}",
+                "Datos incompletos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST crear club (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('clubId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Postman\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT editar club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Editado\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "{{clubId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('204/200', () => pm.expect(pm.response.code).to.be.oneOf([200,204]));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "{{clubId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Validación de campos (BUGS ESPERADOS: deben dar 400)",
+      "item": [
+        {
+          "name": "Club nombre 256 chars → 400 (hoy 500)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Club email inválido → 400 (hoy 201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Postman\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"sin-arroba\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Club teléfono con letras → 400 (hoy 201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Postman\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"35710ABCDE\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Club nombre vacío → 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deportista edad 0 → 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Atleta Postman\",\n  \"deporte\": \"Natación\",\n  \"edad\": 0,\n  \"email\": \"a@test.com\",\n  \"telefono\": \"3571123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deportista edad -1 → 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Atleta Postman\",\n  \"deporte\": \"Natación\",\n  \"edad\": -1,\n  \"email\": \"a@test.com\",\n  \"telefono\": \"3571123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deportista edad 1 → 201 (límite válido)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Atleta Postman\",\n  \"deporte\": \"Natación\",\n  \"edad\": 1,\n  \"email\": \"a@test.com\",\n  \"telefono\": \"3571123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deportista edad 150 → 400 (hoy 201, falta @Max)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Atleta Postman\",\n  \"deporte\": \"Natación\",\n  \"edad\": 150,\n  \"email\": \"a@test.com\",\n  \"telefono\": \"3571123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deportista email inválido → 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Atleta Postman\",\n  \"deporte\": \"Natación\",\n  \"edad\": 20,\n  \"email\": \"xx\",\n  \"telefono\": \"3571123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/deportistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "deportistas"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Seguridad",
+      "item": [
+        {
+          "name": "POST club SIN auth → 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Postman\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE club SIN auth → 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT club SIN auth → 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Postman\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin SIN auth → 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreInstitucion\": \"Club Postman\",\n  \"direccion\": \"Calle 123\",\n  \"coordenadas\": \"-32.1712,-64.3450\",\n  \"disciplinas\": \"Fútbol\",\n  \"telefono\": \"3571123456\",\n  \"email\": \"club@test.com\",\n  \"deporteAdaptado\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/club/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "club",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Credenciales incorrectas → 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "AdminRoot"
+                },
+                {
+                  "key": "password",
+                  "value": "incorrecta"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SQLi en buscar → sin 500 ni fuga",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('No 500', () => pm.expect(pm.response.code).to.be.below(500));",
+                  "pm.test('No devuelve todo por inyección', () => pm.expect(pm.response.text()).to.not.include('syntax error'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clubes/buscar?nombre=' OR '1'='1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clubes",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "' OR '1'"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "XSS almacenado en solicitud",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Aceptado o rechazado, nunca 500', () => pm.expect(pm.response.code).to.be.below(500));",
+                  "pm.test('Anotar: el front debe escapar', () => true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"CLUB\",\n  \"datosAdjuntos\": \"{\\\"nombreInstitucion\\\":\\\"<script>alert(1)</script>\\\"}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "solicitudes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Swagger expuesto (informativo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Informativo: Swagger público ' + pm.response.code, () => true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/swagger-ui/index.html",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "swagger-ui",
+                "index.html"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
